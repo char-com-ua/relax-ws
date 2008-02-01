@@ -1,0 +1,18 @@
+namespace http://code.google.com/p/relax-ws/samples/hello
+
+service Hello {
+
+    port {
+        operation SayHello {
+            in {
+                element name {xsd:string}
+            }
+
+            out {
+                element message {xsd:string}            
+            }
+
+        }
+
+    }
+}

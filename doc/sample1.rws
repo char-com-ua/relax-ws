@@ -1,0 +1,113 @@
+#
+# Sample file #1
+#
+# Has some notes on the thinking behind some of the syntax.
+#
+
+#
+# First is namespace.  If left blank it defaults to "http://tempuri.org/<SERVICENAME>".
+#
+namespace http://code.google.com/p/relax-ws/samples/sample1
+
+# top-level element is 'service', and it must have a name.
+#
+# I toyed with the idea of not using C block syntax, since everything in the entire file
+# will be inside this block, but then it just fits naturally with everything else so I
+# think it doesn't make sense to remove it.  Unless I move it to something resembling
+# a "package" statement, which would be somewhat analagous.  Except a package is more
+# like a namespace, and all this stuff fits in a namespace anyway, so there will probably
+# have to be a namespace declaration (therefore I probably don't want to change this).
+#
+service Score {
+
+    types {
+        ## Only single line comments come through.
+        TreeElementType =
+            element TreeElement {
+                element Name {xsd:string},
+                element Size {xsd:integer},
+                element children {TreeElementType}*
+            }
+    }
+
+    #
+    # Default un-named port
+    # So my thinking here, is that you have to have at least one port, but often times that's all you have,
+    # so why not just generate a default name (like we actually do) like ServiceNamePORT.  In this case it
+    # would be 'ScorePort'.
+    #
+    # Makes sense to have multiple ports, especially for the in versus out operations (what this service
+    # provides versus what it consumes).
+    #
+    port {
+
+        ##
+        ## Lookup current high-scores.
+        ##
+        ## The double hash marks are doc comments (they actually are in relax-ng compact).  They get copied to
+        ## the output file as doc comments.
+        ##
+        ## Operations must have a name, and in WSDL they need an mesage-exchange-pattern.  I'm hoping that can be
+        ## inferred by whether the "receive" and/or "return" messages are defined.  They are optional but it should
+        ## be an error if you don't have any input or output, shouldn't it?
+        ##
+        ## I just added "in-out" (ie , the mep) to the front of the declaration, to see how that looks.  I think it
+        ## looks pretty good actually.
+        operation GetScores {
+
+            # Take empty 'GetScoresRequest'
+            #
+            # In this example the input message has no name provided, so the default name will be used, something like
+            # "GetScoresRequest".  The relax-ng schema declarations within the block define the elements contained by
+            # this root element.  In this case it is empty, which means at least that a message IS received, it's just
+            # empty.  As opposed to if the "receive" was unspecified, in which case this out be an out-only message.
+            in {
+              # This is a comment
+              empty
+            }
+
+            ## Return list of high-score.
+            # Again, the "return" element can specify a name for the root element, otherwise the default
+            # <Operation-Name>Response, such as "GetScoresResponse", will be used.  The relax-ng schema it contains
+            # defines the schema for the response.
+            #
+            # Not sure I like the use of 'return' as the keyword.  If you have an out-only mep, it's more like 'send'
+            # or just 'out'.
+            #
+            # In WSDL 2 the meps are defined as 'in-only', 'robust-in-only', 'in-out', 'in-optional-out',
+            # 'out-only', 'robust-out-only', 'out-in', 'out-optional-in'.
+            # Everthing is "in" and "out".  Should therefore probably just use the same terminology.  Almost
+            # certainly, because the "out-in" exhchange would send the out first, and receive the in.  It wouldn't
+            # make sense to say "I return you X, and then I receive Y".  The term "send" would be okay, but just
+            # adopting "in" and "out" is probably the best solution.
+            out HighScores {
+                ## Blah blah blah this is a doc comment.  Too bad I can't put one on the root node!
+                element score {
+                    element initials { xsd:string },
+                    element value { xsd:int }
+                }*
+            }
+
+            fault {
+                empty
+            }
+        }
+
+        #
+        # An operation that returns a tree structure.
+        #
+        operation GetTree {
+            in {
+                empty
+            }
+
+            out {
+                ## A node with a name
+                ## that can contain other nodes.
+                element root {TreeElementType}
+            }
+        }
+    }
+}
+
+    

@@ -1,0 +1,46 @@
+namespace http://code.google.com/p/relax-ws/samples/multiport
+
+service Hotel {
+
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # InPort -- The operations *provided* by this service to other consumers.
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    port InPort {
+        operation Look {
+
+            in {
+                element foo {xsd:date}                
+            }
+
+            out {
+                element rate {xsd:decimal {totalDigits = "6" fractionDigits="2"}}                
+            }
+        }
+    }
+
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # OutPort -- The operations *consumed* by this service in order to function,
+    #            ie what services must be provided to it for it to function.
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    port OutPort {
+        operation CleanseAddress {
+            in {
+                element city {xsd:string},
+                element state {xsd:string},
+                element zip {xsd:int},
+                element line1 {xsd:string},
+                element line2 {xsd:string}
+            }
+
+            out {
+                element city {xsd:string},
+                element state {xsd:string},
+                element zip {xsd:int},
+                element line1 {xsd:string},
+                element line2 {xsd:string}
+            }
+
+        }
+
+    }
+}
