@@ -1,0 +1,230 @@
+/*
+ * Copyright 2008 Jason Sando
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+options {
+   MULTI=true;
+   IGNORE_CASE=false;
+   STATIC=false;
+}
+
+PARSER_BEGIN (RelaxWizParser)
+package com.google.code.p.relaxws.parser;
+
+import java.io.*;
+import java.util.*;
+
+public class RelaxWizParser {
+
+    private StringBuffer rncBuffer = new StringBuffer ();
+
+    public static void main (String[] args) throws ParseException, IOException {
+        if (args.length == 0) {
+            System.out.println ("Usage:  RelaxWizParser inputfile");
+            System.exit (1);
+        }
+
+
+        BufferedReader rdr = new BufferedReader (new FileReader (args[0]));
+        RelaxWizParser p = new RelaxWizParser (rdr);
+        ASTservice tree = p.service ();
+        tree.dump ("\t");
+    }
+
+    public String getAllRnc() {
+        return rncBuffer.toString();
+    }
+}
+
+PARSER_END (RelaxWizParser)
+
+/*
+ * Whitespace
+ */
+<*> SKIP :
+{
+      " "
+    | "\t"
+    | "\r"
+    | "\n"
+    | "\r\n"
+}
+
+/*
+ * Keywords
+ */
+<*> TOKEN :
+{
+        <NAMESPACE: "namespace">
+    |   <SERVICE:   "service">
+    |   <PORT:      "port">
+    |   <OPERATION: "operation">
+    |   <IN:        "in">
+    |   <OUT:       "out">
+    |   <FAULT:     "fault">
+    |   <TYPES:     "types">
+}
+
+/*
+ * Operators
+ */
+<*> TOKEN :
+{
+      <LBRACE:      "{">
+    | <RBRACE:      "}">
+}
+
+/*
+ * Identifiers
+ */
+<*> TOKEN :
+{
+        <IDENTIFIER: <LETTER> (<LETTER> | <DIGIT> | <SYMBOL>)*>
+    |   <#LETTER: "_" | "$" | ["a"-"z","A"-"Z"]>
+    |   <#DIGIT: ["0"-"9"]>
+    |   <#SYMBOL: [":","/",".","-"]>
+}
+
+SPECIAL_TOKEN: /* COMMENTS */
+{
+     <TRAILING_COMMENT: "#" (~["\n","\r"])* >
+}
+
+ASTservice service () :
+{
+    Token t;
+}
+{
+    (<NAMESPACE> t=<IDENTIFIER>
+    {
+        jjtThis.setNamespace (t.image);
+    }
+    )?
+    
+    <SERVICE> t=<IDENTIFIER> <LBRACE> (typesDecl())? (portDecl())+ <RBRACE>
+    {
+        jjtThis.setName (t.image);
+        return jjtThis;
+    }
+}
+
+void typesDecl() :
+{}
+{
+    <TYPES> schemaDecl()
+}
+
+void schemaDecl() :
+{}
+{
+    <LBRACE> rnc()
+}
+
+JAVACODE
+void rnc() {
+    int nesting = 1;
+    while (true) {
+        char ch;
+        try {
+            ch = jj_input_stream.readChar();
+        } catch (Exception ioe) {
+            System.err.println (ioe);
+            return;
+        }
+
+        if (ch == '{') {
+            nesting++;
+        } else if (ch == '}') {
+            nesting--;
+            if (nesting == 0) break;
+        }
+    }
+    String s = jj_input_stream.GetImage();
+    s = s.substring (1, s.length() - 1);
+    jjtThis.setRnc (s);
+
+    rncBuffer.append (s);
+}
+
+void portDecl() :
+{
+    Token t = null;
+}
+{
+    <PORT> (t=<IDENTIFIER>)? <LBRACE> (operationDecl())* <RBRACE>
+    {
+        if (t != null) {
+            jjtThis.setName (t.image);
+        } 
+    }
+}
+
+void operationDecl() :
+{
+    Token t;
+}
+{
+    <OPERATION> t=<IDENTIFIER> <LBRACE> (inDecl())? (outDecl())? (faultDecl())? <RBRACE>
+    {
+        jjtThis.setName (t.image);
+    }
+}
+
+void inDecl() #MessageDef:
+{
+    Token t = null;
+}
+{
+    <IN> (t=<IDENTIFIER>)? schemaDecl()
+    {
+        if (t != null) {
+            jjtThis.setName (t.image);
+        }
+        jjtThis.setType (ASTMessageDef.MessageType.In);
+    }
+}
+
+void outDecl() #MessageDef:
+{
+    Token t = null;
+}
+{
+    <OUT> (t=<IDENTIFIER>)? schemaDecl()
+    {
+        if (t != null) {
+            jjtThis.setName (t.image);
+        }
+        jjtThis.setType (ASTMessageDef.MessageType.Out);
+    }
+}
+
+void faultDecl() #MessageDef: 
+{
+    Token t = null;
+}
+{
+    <FAULT> (t=<IDENTIFIER>)? schemaDecl()
+    {
+        if (t != null) {
+            jjtThis.setName (t.image);
+        }
+        jjtThis.setType (ASTMessageDef.MessageType.Fault);
+    }
+}
+
+
+
+
+
