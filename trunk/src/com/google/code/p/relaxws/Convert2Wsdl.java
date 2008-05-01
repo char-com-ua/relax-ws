@@ -242,7 +242,8 @@ public class Convert2Wsdl {
                             break;
 
                         case Fault:
-                            // todo
+                            out.println ("      <fault message=\"tns:" + message.getMessageName() + "\"/>");
+                            break;
                     }
                 }
 
@@ -264,7 +265,10 @@ public class Convert2Wsdl {
                         "      </input>\n" +
                         "      <output>\n" +
                         "        <soap:body use=\"literal\"/>\n" +
-                        "      </output>");
+                        "      </output>\n" +
+                        "      <fault>\n" +
+                        "        <soap:body use=\"literal\"/>\n" +
+                        "      </fault>");
                 out.println ("    </operation>");
             }
             out.println ("  </binding>");
