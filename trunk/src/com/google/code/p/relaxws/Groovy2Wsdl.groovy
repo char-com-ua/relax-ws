@@ -227,7 +227,7 @@ USAGE:
                             break
 
                         case ASTMessageDef.MessageType.Fault:
-                            // todo
+                            out.println("      <fault message=\"tns:${message.messageName}\"/>")
                             break
                     }
                 }
@@ -252,6 +252,9 @@ USAGE:
         <output>
             <soap:body use="literal"/>
         </output>
+        <fault>
+            <soap:body use="literal"/>
+        </fault>
     </operation>
 """
             }
