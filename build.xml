@@ -16,7 +16,7 @@ Example build (OS-X):
 -->
 <project name="relaxws" default="build" basedir=".">
 
-    <property name="app.version" value="0.1"/>
+    <property name="app.version" value="0.2"/>
     <property name="release.name" value="${ant.project.name}-${app.version}"/>
 
     <property name="javacc.home" value=""/>
@@ -134,7 +134,7 @@ Example build (OS-X):
             <zipfileset dir="${build.home}/classes"/>
             <zipgroupfileset dir="lib" includes="*.jar"/>
             <manifest>
-                <attribute name="Main-Class" value="com.google.code.p.relaxwsws.Convert2Wsdl"/>
+                <attribute name="Main-Class" value="com.google.code.p.relaxws.Convert2Wsdl"/>
             </manifest>
         </jar>
 
