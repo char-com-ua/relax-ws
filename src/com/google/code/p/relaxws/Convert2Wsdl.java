@@ -78,7 +78,7 @@ public class Convert2Wsdl {
                 outputPath = args[i + 1];
                 i++;
             } else if (args[i].startsWith("-")) {
-                usage("unrecognized option " + args[i]);                
+                usage("unrecognized option " + args[i]);
             } else {
                 if (inputFilePath != null) {
                     usage("Multiple input files specified: " + inputFilePath + "," + args[i]);
@@ -266,10 +266,11 @@ public class Convert2Wsdl {
                         "      <output>\n" +
                         "        <soap:body use=\"literal\"/>\n" +
                         "      </output>\n" +
-                        "      <fault>\n" +
-                        "        <soap:body use=\"literal\"/>\n" +
-                        "      </fault>");
+                        "      <!--<fault>\n" +
+                        "        <soap:fault use=\"literal\"/>\n" +
+                        "      </fault>-->");
                 out.println ("    </operation>");
+                // TODO: uncomment soap:fault above once faults are truly implemented
             }
             out.println ("  </binding>");
 

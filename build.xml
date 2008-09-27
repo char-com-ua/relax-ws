@@ -16,7 +16,7 @@ Example build (OS-X):
 -->
 <project name="relaxws" default="build" basedir=".">
 
-    <property name="app.version" value="0.2"/>
+    <property name="app.version" value="0.2.1"/>
     <property name="release.name" value="${ant.project.name}-${app.version}"/>
 
     <property name="javacc.home" value=""/>
@@ -116,7 +116,7 @@ Example build (OS-X):
         <!-- Playing with groovy -->
         <java classpathref="test.classpath"
               classname="com.google.code.p.relaxws.Groovy2Wsdl" fork="true">
-            <arg line="-d build doc/sample1.rws"/>
+            <arg line="-d build\groovy doc/sample1.rws"/>
         </java>
 
     </target>

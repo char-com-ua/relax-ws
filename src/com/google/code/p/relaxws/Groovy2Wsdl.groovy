@@ -253,7 +253,7 @@ USAGE:
             <soap:body use="literal"/>
         </output>
         <fault>
-            <soap:body use="literal"/>
+            <soap:fault use="literal"/>
         </fault>
     </operation>
 """
