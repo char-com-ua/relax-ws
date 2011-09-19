@@ -19,13 +19,13 @@ service Hello {
     port {
     	## hello ПривеД!
         operation SayHello {
-            in {
+            in SayHello {
             	## hello element ПривеД2!
                 element name {xsd:string},
                 element mooo {empty}
             }
 
-            out {
+            out SayHelloResponse {
             	## hello element documentation 2
                 element message {TreeElementType}            
             }
