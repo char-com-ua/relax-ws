@@ -19,15 +19,18 @@ Example build (OS-X):
     <property name="app.version" value="0.2.1"/>
     <property name="release.name" value="${ant.project.name}-${app.version}"/>
 
-    <property name="javacc.home" value=""/>
+    <property environment="env"/>
+    
+    <!--property name="javacc.home" location="${env.JAVACC_HOME}"/-->
+    <property name="javacc.home" location="../../javacc-5.0"/>
+    
     <property name="build.home" value="${basedir}/build"/>
     <property name="dist.base" value="${build.home}/dist"/>
     <property name="dist.home" value="${dist.base}/${release.name}"/>
 
-    <property environment="env"/>
-
     <path id="groovy.classpath">
-        <fileset dir="${env.GROOVY_HOME}/embeddable/"/>
+        <fileset dir="../../groovy-1.7.5/embeddable/"/>
+        <!--fileset dir="${env.GROOVY_HOME}/embeddable/"/-->
     </path>
 
     <taskdef name="groovyc" classname = "org.codehaus.groovy.ant.Groovyc"
@@ -70,7 +73,7 @@ Example build (OS-X):
                 choiceambiguitycheck="2"
                 otherambiguitycheck="1"
                 static="false"
-                optimizetokenmanager="true"
+                
                 errorreporting="true"
                 buildparser="true"
                 buildtokenmanager="true"
@@ -100,23 +103,8 @@ Example build (OS-X):
 
         <java classpathref="test.classpath"
               classname="com.google.code.p.relaxws.Convert2Wsdl" fork="true">
-            <arg line="-d build doc/sample1.rws"/>
-        </java>
-
-        <java classpathref="test.classpath"
-              classname="com.google.code.p.relaxws.Convert2Wsdl" fork="true">
-            <arg line="-d build doc/hello.rws"/>
-        </java>
-
-        <java classpathref="test.classpath"
-              classname="com.google.code.p.relaxws.Convert2Wsdl" fork="true">
-            <arg line="-d build doc/multiport.rws"/>
-        </java>
-
-        <!-- Playing with groovy -->
-        <java classpathref="test.classpath"
-              classname="com.google.code.p.relaxws.Groovy2Wsdl" fork="true">
-            <arg line="-d build\groovy doc/sample1.rws"/>
+            <arg line="-d . -encoding windows-1251 doc/hello.rws"/>
+            <!--jvmarg value="-Dfile.encoding=utf-8"/-->
         </java>
 
     </target>

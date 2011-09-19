@@ -25,6 +25,7 @@ import com.thaiopensource.relaxng.output.OutputFormat;
 import com.thaiopensource.relaxng.output.xsd.XsdOutputFormat;
 import com.thaiopensource.xml.sax.ErrorHandlerImpl;
 import com.google.code.p.relaxws.parser.*;
+import com.thaiopensource.resolver.BasicResolver;
 
 import java.io.*;
 import java.net.URL;
@@ -49,7 +50,7 @@ public class Convert2Wsdl {
         if (reason != null)
             System.err.println ("Command failed: " + reason);
         System.err.println ("\nUSAGE:");
-        System.err.println("Convert2Wsdl [-d output-folder] <input.rws>");
+        System.err.println("Convert2Wsdl [-d output-folder] [-encoding source-encoding] <input.rws>");
         System.exit (1);
     }
 
@@ -57,6 +58,12 @@ public class Convert2Wsdl {
         if (reason != null)
             System.err.println ("Command failed: " + reason);
         System.exit (1);
+    }
+
+    private static void fail (String reason,int ret) {
+        if (reason != null)
+            System.err.println ("Command failed: " + reason);
+        System.exit (ret);
     }
 
     private static String fileBase (String name) {
@@ -69,31 +76,43 @@ public class Convert2Wsdl {
 
     public static void main(String[] args) throws Exception {
 
-        String outputPath = null;
+        String outputPath = ".";
         String inputFilePath = null;
+        String encoding = System.getProperty("file.encoding");
 
         int lastArg = args.length - 1;
         for (int i = 0; i < args.length; i++) {
             if ("-d".equals (args[i]) && (i < lastArg)) {
                 outputPath = args[i + 1];
                 i++;
+            } else if ("-encoding".equals (args[i]) && (i < lastArg)) {
+            	encoding = args[i + 1];
+            	i++;
             } else if (args[i].startsWith("-")) {
                 usage("unrecognized option " + args[i]);
             } else {
-                if (inputFilePath != null) {
-                    usage("Multiple input files specified: " + inputFilePath + "," + args[i]);
-                }
                 inputFilePath = args[i];
+                String flist[]=new File(inputFilePath).list();
+                if(flist!=null && flist.length>0) {
+					for(String s:flist){
+						convert(outputPath,s,encoding);
+					}
+                }else{
+					convert(outputPath,inputFilePath,encoding);
+                }
             }
         }
 
+    }
+    
+    private static void convert(String outputPath, String inputFilePath,String encoding)throws Exception{
         if (inputFilePath == null) {
             usage(null);
         }
 
         File inputFile = new File (inputFilePath);
         if (!inputFile.exists()) {
-            fail ("'" + inputFilePath + "' not found.");
+            fail ("'" + inputFilePath + "' not found.",0);
         }
         if (outputPath == null) {
             outputPath = inputFile.getParent();
@@ -105,22 +124,26 @@ public class Convert2Wsdl {
                 fail ("failed to create output folder '" + outputPath + "'");
             }
         }
+        System.err.println("Convert2Wsdl: process '" + inputFile.getName() );
 
-        BufferedReader rdr = new BufferedReader (new FileReader(inputFile));
+        BufferedReader rdr = new BufferedReader (new InputStreamReader( new FileInputStream(inputFile), encoding ));
         RelaxWizParser p = new RelaxWizParser (rdr);
         ASTservice tree = p.service ();
 
         File outputFile = new File(outputFileDir, fileBase(inputFile.getName()) + ".wsdl");
-        System.err.println("Convert2Wsdl: processing '" + inputFile.getName() + "' to '" + outputFile.getPath());
 
-        PrintWriter out = new PrintWriter(new FileWriter(outputFile));
+        PrintWriter out = new PrintWriter(outputFile,"UTF-8");
 
         Convert2Wsdl converter = new Convert2Wsdl();
         converter.out = out;
         converter.tree = tree;
         converter.convert();
-
+        out.flush();
         out.close();
+        
+        System.err.println("    wsdl created: '" + outputFile.getPath());
+        converter=null;
+        out=null;
     }
 
     private void convert() throws Exception {
@@ -137,6 +160,7 @@ public class Convert2Wsdl {
                 "             xmlns:soap=\"http://schemas.xmlsoap.org/wsdl/soap/\"\n" +
                 "             xmlns=\"http://schemas.xmlsoap.org/wsdl/\">\n" +
                 "\n" +
+                "  <documentation>"+tree.getDocumentation()+"</documentation>\n"+
                 "  <types>\n");
 
         // Make a pass through and assign all message names, and build proper rnc block
@@ -189,7 +213,6 @@ public class Convert2Wsdl {
             }
         }
 //        rncBuff.append (")");
-
         // convert rnc to xsd
         String xsdText = toXsd(rncBuff.toString());
         out.print (xsdText);
@@ -227,6 +250,8 @@ public class Convert2Wsdl {
                 ASToperationDecl op = (ASToperationDecl) opNode;
 
                 out.println ("    <operation name=\"" + op.getName() + "\">");
+                if(op.getDocumentation()!=null && op.getDocumentation().length()!=0)
+                	out.println ("      <documentation>" + op.getDocumentation() + "</documentation>");
 
                 // children of op node
                 for (Node msgNode: op.getChildren()) {
@@ -259,7 +284,7 @@ public class Convert2Wsdl {
                 ASToperationDecl op = (ASToperationDecl) opNode;
 
                 out.println ("    <operation name=\"" + op.getName() + "\">");
-                out.println ("      <soap:operation soapAction=\"" + ns + "/" + port.getName() + "#" + op.getName() + "\"/>");
+                out.println ("      <soap:operation soapAction=\"urn:" + op.getName() + "\"/>");
                 out.println ("      <input>\n" +
                         "        <soap:body use=\"literal\"/>\n" +
                         "      </input>\n" +
@@ -275,7 +300,7 @@ public class Convert2Wsdl {
             out.println ("  </binding>");
 
             out.println();
-            out.println ("  <service name=\"" + tree.getName() + port.getName() + "Service\">\n" +
+            out.println ("  <service name=\"" + tree.getName() + (tree.jjtGetNumChildren()==1?"":port.getName()+"Service") + "\">\n" +
                     "    <port name=\"" + port.getName() + "\" binding=\"tns:" + port.getName() + "SoapBinding\">\n" +
                     "      <soap:address location=\"http://example.com/" + tree.getName() + "\"/>\n" +
                     "    </port>\n" +
@@ -290,7 +315,7 @@ public class Convert2Wsdl {
 
         // write the rnc to a temp file
         File rncInput = File.createTempFile("relaxwiz", ".rnc");
-        FileWriter fw = new FileWriter (rncInput);
+        PrintWriter fw = new PrintWriter (rncInput,"UTF-8");
         fw.write(rnc);
         fw.close();
 
@@ -299,7 +324,8 @@ public class Convert2Wsdl {
         ErrorHandlerImpl handler = new ErrorHandlerImpl();
         SchemaCollection sc = null;
         try {
-            sc = inFormat.load(new URL("file", "", rncInput.getAbsolutePath()).toString(), new String[0], "xsd", handler);
+        	String uri=rncInput.toURI().toURL().toString();
+            sc = inFormat.load(uri, new String[0], "xsd", handler,BasicResolver.getInstance());
         } catch (InputFailedException e) {
             System.err.println("Error in RNC preprocessor, source follows:");
             int line = 0;
@@ -321,7 +347,7 @@ public class Convert2Wsdl {
         of.output(sc, od, new String[]{}, "rnc", handler);
 
         // read in file and return as string.
-        BufferedReader reader = new BufferedReader(new FileReader (xsdOutput));
+        BufferedReader reader = new BufferedReader(new InputStreamReader( new FileInputStream(xsdOutput), "UTF-8" ));
         String line;
         StringBuffer buf = new StringBuffer();
         while ((line = reader.readLine()) != null) {
@@ -335,3 +361,4 @@ public class Convert2Wsdl {
     }
 
 }
+

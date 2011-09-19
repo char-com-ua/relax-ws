@@ -1,15 +1,33 @@
+#hello
 namespace http://code.google.com/p/relax-ws/samples/hello
 
+ ## Hello service documentation ПривеД3!
 service Hello {
+    types {
+        ## Only single line comments come through.
+        TreeElementType =
+            element TreeElement {
+            	## hellooooooo
+                element Name {xsd:string},
+                ## goooooodbye
+                element Size {xsd:integer},
+                element children {TreeElementType}*
+            }
+    }
+	
 
     port {
+    	## hello ПривеД!
         operation SayHello {
             in {
-                element name {xsd:string}
+            	## hello element ПривеД2!
+                element name {xsd:string},
+                element mooo {empty}
             }
 
             out {
-                element message {xsd:string}            
+            	## hello element documentation 2
+                element message {TreeElementType}            
             }
 
         }

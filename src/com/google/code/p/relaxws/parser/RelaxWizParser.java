@@ -18,7 +18,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
         BufferedReader rdr = new BufferedReader (new FileReader (args[0]));
         RelaxWizParser p = new RelaxWizParser (rdr);
         ASTservice tree = p.service ();
-        tree.dump ("\t");
+        tree.dump ("\u005ct");
     }
 
     public String getAllRnc() {
@@ -41,7 +41,10 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
         jj_la1[0] = jj_gen;
         ;
       }
-      jj_consume_token(SERVICE);
+      t = jj_consume_token(SERVICE);
+        try {
+                jjtn000.setDocumentation(t.specialToken.image.replaceFirst("#*", "").trim() );
+            }catch(Exception e){}
       t = jj_consume_token(IDENTIFIER);
       jj_consume_token(LBRACE);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -230,7 +233,10 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);Token t;
     try {
-      jj_consume_token(OPERATION);
+      t = jj_consume_token(OPERATION);
+        try {
+                jjtn000.setDocumentation(t.specialToken.image.replaceFirst("#*", "").trim() );
+            }catch(Exception e){}
       t = jj_consume_token(IDENTIFIER);
       jj_consume_token(LBRACE);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -539,7 +545,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
       return (jj_ntk = jj_nt.kind);
   }
 
-  private java.util.List jj_expentries = new java.util.ArrayList();
+  private java.util.List<int[]> jj_expentries = new java.util.ArrayList<int[]>();
   private int[] jj_expentry;
   private int jj_kind = -1;
 
@@ -569,7 +575,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
     }
     int[][] exptokseq = new int[jj_expentries.size()][];
     for (int i = 0; i < jj_expentries.size(); i++) {
-      exptokseq[i] = (int[])jj_expentries.get(i);
+      exptokseq[i] = jj_expentries.get(i);
     }
     return new ParseException(token, exptokseq, tokenImage);
   }
