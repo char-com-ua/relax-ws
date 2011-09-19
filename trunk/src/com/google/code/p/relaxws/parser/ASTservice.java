@@ -9,6 +9,7 @@ public class ASTservice extends SimpleNode {
 
     private String name;
     private String namespace;
+    private String documentation=null;
 
     public ASTservice(int id) {
         super(id);
@@ -24,6 +25,7 @@ public class ASTservice extends SimpleNode {
 
     public void setName(String name) {
         this.name = name;
+        if(this.documentation==null)documentation=""+name+" service";
     }
 
     public String getNamespace() {
@@ -32,5 +34,13 @@ public class ASTservice extends SimpleNode {
 
     public void setNamespace(String namespace) {
         this.namespace = namespace;
+    }
+
+    public String getDocumentation() {
+        return documentation;
+    }
+
+    public void setDocumentation(String documentation) {
+    	if(documentation.length()>0)this.documentation = documentation;
     }
 }

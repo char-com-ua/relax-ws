@@ -18,6 +18,7 @@ options {
    MULTI=true;
    IGNORE_CASE=false;
    STATIC=false;
+   UNICODE_INPUT=true;
 }
 
 PARSER_BEGIN (RelaxWizParser)
@@ -113,7 +114,13 @@ ASTservice service () :
     }
     )?
     
-    <SERVICE> t=<IDENTIFIER> <LBRACE> (typesDecl())? (portDecl())+ <RBRACE>
+    t=<SERVICE>
+    {
+    	try {
+	    	jjtThis.setDocumentation(t.specialToken.image.replaceFirst("#*", "").trim() );
+	    }catch(Exception e){}
+    }
+    t=<IDENTIFIER> <LBRACE> (typesDecl())? (portDecl())+ <RBRACE>
     {
         jjtThis.setName (t.image);
         return jjtThis;
@@ -176,7 +183,13 @@ void operationDecl() :
     Token t;
 }
 {
-    <OPERATION> t=<IDENTIFIER> <LBRACE> (inDecl())? (outDecl())? (faultDecl())? <RBRACE>
+    t=<OPERATION> 
+    {
+    	try {
+	    	jjtThis.setDocumentation(t.specialToken.image.replaceFirst("#*", "").trim() );
+	    }catch(Exception e){}
+    }
+    t=<IDENTIFIER> <LBRACE> (inDecl())? (outDecl())? (faultDecl())? <RBRACE>
     {
         jjtThis.setName (t.image);
     }

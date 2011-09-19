@@ -24,4 +24,12 @@ public class ASToperationDecl extends SimpleNode {
     public void setName(String name) {
         this.name = name;
     }
+    
+    private String documentation=null;
+    public void setDocumentation(String documentation) {
+    	if(documentation!=null && documentation.length()>0)this.documentation = documentation;
+    }
+    public String getDocumentation() {
+        return documentation;
+    }
 }
