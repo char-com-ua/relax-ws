@@ -18,27 +18,19 @@ Example build (OS-X):
 
     <property name="app.version" value="0.2.1"/>
     <property name="release.name" value="${ant.project.name}-${app.version}"/>
+    <property name="javacc.ver" value="javacc-5.0" />
+    <property name="javacc.url" value="http://java.net/projects/javacc/downloads/download/${javacc.ver}.zip" />
 
-    <property environment="env"/>
-    
-    <!--property name="javacc.home" location="${env.JAVACC_HOME}"/-->
-    <property name="javacc.home" location="../../javacc-5.0"/>
+    <property name="javacc.home" location="depends/${javacc.ver}"/>
     
     <property name="build.home" value="${basedir}/build"/>
     <property name="dist.base" value="${build.home}/dist"/>
     <property name="dist.home" value="${dist.base}/${release.name}"/>
 
-    <path id="groovy.classpath">
-        <fileset dir="../../groovy-1.7.5/embeddable/"/>
-        <!--fileset dir="${env.GROOVY_HOME}/embeddable/"/-->
-    </path>
-
-    <taskdef name="groovyc" classname = "org.codehaus.groovy.ant.Groovyc"
-            classpathref="groovy.classpath"/>
+	<available property="javacc.exists" file="depends/${javacc.ver}/bin" />
 
     <path id="compile.classpath">
         <fileset dir="lib" includes="*.jar"/>
-        <path refid="groovy.classpath"/>
     </path>
 
     <path id="test.classpath">
@@ -49,8 +41,16 @@ Example build (OS-X):
     <target name="clean">
         <delete dir="build"/>
     </target>
+    
+    <target name="get-depends" unless="javacc.exists" >
+    	<mkdir dir="depends"/>
+		<get src="${javacc.url}" dest="depends/${javacc.ver}.zip" />
+		<unzip src="depends/${javacc.ver}.zip" dest="depends/" />
+        <delete file="depends/${javacc.ver}.zip"/>
+    </target>
+    
 
-    <target name="build">
+    <target name="build" depends="get-depends">
         <mkdir dir="build"/>
 
         <jjtree
@@ -82,20 +82,15 @@ Example build (OS-X):
 
         <!-- Compile Java classes as necessary -->
         <mkdir dir="${build.home}/classes"/>
-        <!--<javac srcdir="src"-->
-               <!--destdir="${build.home}/classes"-->
-               <!--debug="true"-->
-               <!--deprecation="false"-->
-               <!--optimize="true"-->
-               <!--source="1.5"-->
-               <!--includeAntRuntime="no">-->
-            <!--<classpath refid="compile.classpath"/>-->
-        <!--</javac>-->
-
-        <groovyc srcdir="src" destdir="${build.home}/classes">
+        <javac srcdir="src"
+               destdir="${build.home}/classes"
+               debug="true"
+               deprecation="false"
+               optimize="true"
+               source="1.5"
+               includeAntRuntime="no" >
             <classpath refid="compile.classpath"/>
-            <javac source="1.5" debug="on" optimize="on"/>
-        </groovyc>
+        </javac>
 
     </target>
 
@@ -126,10 +121,6 @@ Example build (OS-X):
             </manifest>
         </jar>
 
-
-        <!--<copy todir="${dist.home}/lib">-->
-            <!--<fileset dir="${basedir}/lib" includes="*.jar"/>-->
-        <!--</copy>-->
 
         <zip basedir="${dist.base}"
              zipfile="${dist.base}/${release.name}.zip"
