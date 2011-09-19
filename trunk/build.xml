@@ -5,8 +5,7 @@ Relax-WS build file (ant).
 
 You will need:
 * ant 1.7.0 (may work with 1.6)
-* groovy 1.5.1, and GROOVY_HOME env var pointing to where it's installed
-* javacc 4.0, and javacc.home point to where it's installed
+* javacc 5.0 will be downloaded automatically or do it manually into depends dir
 
 Example build (OS-X):
   export GROOVY_HOME=/Users/jsando/Downloads/groovy-1.5.1
@@ -91,6 +90,21 @@ Example build (OS-X):
                includeAntRuntime="no" >
             <classpath refid="compile.classpath"/>
         </javac>
+        
+        <mkdir dir="${dist.home}/lib"/>
+        <jar jarfile="${dist.home}/lib/${ant.project.name}.jar">
+            <zipfileset dir="${build.home}/classes"/>
+            <zipgroupfileset dir="lib" includes="*.jar"/>
+            <manifest>
+                <attribute name="Main-Class" value="com.google.code.p.relaxws.Convert2Wsdl"/>
+            </manifest>
+        </jar>
+		<copy todir="${dist.home}">
+			<fileset dir="./doc/" includes="*.txt" />
+		</copy>
+		<copy todir="${dist.home}" >
+			<fileset dir="./" includes="samples/*.*"/>
+		</copy>
 
     </target>
 
@@ -98,10 +112,8 @@ Example build (OS-X):
 
         <java classpathref="test.classpath"
               classname="com.google.code.p.relaxws.Convert2Wsdl" fork="true">
-            <arg line="-d . -encoding windows-1251 doc/hello.rws"/>
-            <!--jvmarg value="-Dfile.encoding=utf-8"/-->
+            <arg line="-d ${build.home} -encoding windows-1251 samples/hello.rws"/>
         </java>
-
     </target>
 
     <target name="release" depends="clean,build,test" description="Build release package.">
@@ -113,16 +125,7 @@ Example build (OS-X):
             <!--<fileset dir="${build.home}/classes"/>-->
         <!--</jar>-->
 
-        <jar jarfile="${dist.home}/${ant.project.name}.jar">
-            <zipfileset dir="${build.home}/classes"/>
-            <zipgroupfileset dir="lib" includes="*.jar"/>
-            <manifest>
-                <attribute name="Main-Class" value="com.google.code.p.relaxws.Convert2Wsdl"/>
-            </manifest>
-        </jar>
-
-
-        <zip basedir="${dist.base}"
+       <zip basedir="${dist.base}"
              zipfile="${dist.base}/${release.name}.zip"
              includes="${release.name}/**"/>
 
