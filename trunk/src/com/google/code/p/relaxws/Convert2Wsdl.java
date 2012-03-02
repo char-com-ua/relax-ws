@@ -31,6 +31,8 @@ import java.io.*;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -214,6 +216,8 @@ public class Convert2Wsdl {
         }
 //        rncBuff.append (")");
         // convert rnc to xsd
+        rncBuff = replaceExternalRefWithContent(rncBuff);
+        
         String xsdText = toXsd(rncBuff.toString());
         out.print (xsdText);
 
@@ -358,6 +362,52 @@ public class Convert2Wsdl {
         }
         reader.close();
         return buf.toString();
+    }
+    
+    private StringBuffer replaceExternalRefWithContent(StringBuffer rncBuff) {
+        StringBuffer tempBuff = new StringBuffer(rncBuff);
+        while (tempBuff.indexOf("external") > -1) {
+        		 Pattern pattern = Pattern.compile("(\\s*external\\s*\")(.*?)(\")");
+            Matcher matcher = pattern.matcher(tempBuff.toString());
+            StringBuffer sb = new StringBuffer();
+            while (matcher.find()) {
+                StringBuffer extFileContent = getFileContent(matcher.group(2));
+                matcher.appendReplacement(sb, extFileContent != null ? extFileContent.toString() : "");
+            }
+            matcher.appendTail(sb);
+            tempBuff = sb;
+        }
+		 		 return tempBuff;
+	}
+    
+    private StringBuffer getFileContent(String filePath) {
+        File file = new File(filePath.substring(8));
+        BufferedInputStream bin = null;
+        StringBuffer str = new StringBuffer();
+        try {
+		          FileInputStream fin = new FileInputStream(file);
+		          bin = new BufferedInputStream(fin);
+		          byte[] contents = new byte[1024];
+		          int bytesRead=0;
+
+		          while( (bytesRead = bin.read(contents)) != -1){
+		             str.append(new StringBuffer(new String(contents, 0, bytesRead)));
+		          }
+		          return str;
+
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found" + e);
+        } catch (IOException e) {
+            System.out.println("Exception while reading the file " + e);
+        } finally {
+           try{
+               if(bin != null) bin.close();
+            } catch(IOException e) {
+             System.out.println("Error while closing the stream :" + e);
+            }
+
+       }
+		 		 return str;
     }
 
 }

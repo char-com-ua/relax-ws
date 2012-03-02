@@ -4,15 +4,9 @@ namespace http://code.google.com/p/relax-ws/samples/hello
  ## Hello service documentation ПривеД3!
 service Hello {
     types {
-        ## Only single line comments come through.
-        TreeElementType =
-            element TreeElement {
-            	## hellooooooo
-                element Name {xsd:string},
-                ## goooooodbye
-                element Size {xsd:integer},
-                element children {TreeElementType}*
-            }
+        # Only single line comments come through.
+        OtherElementType = external "file:///./samples/world.rnc"
+			
     }
 	
 
@@ -21,13 +15,14 @@ service Hello {
         operation SayHello {
             in SayHello {
             	## hello element ПривеД2!
-                element name {xsd:string},
-                element mooo {empty}
+                element greetingMessage {xsd:string},
+                element date {xsd:date},
+				element to {OtherElementType}
             }
 
             out SayHelloResponse {
             	## hello element documentation 2
-                element message {TreeElementType}            
+                element message {xsd:string}            
             }
 
         }
