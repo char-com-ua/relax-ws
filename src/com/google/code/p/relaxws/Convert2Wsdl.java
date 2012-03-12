@@ -47,6 +47,7 @@ public class Convert2Wsdl {
 
     private PrintWriter out;
     private ASTservice tree;
+    private final int MAX_COUNT = 3;
 
     private static void usage (String reason) {
         if (reason != null)
@@ -81,7 +82,6 @@ public class Convert2Wsdl {
         String outputPath = ".";
         String inputFilePath = null;
         String encoding = System.getProperty("file.encoding");
-
         int lastArg = args.length - 1;
         for (int i = 0; i < args.length; i++) {
             if ("-d".equals (args[i]) && (i < lastArg)) {
@@ -366,18 +366,21 @@ public class Convert2Wsdl {
     
     private StringBuffer replaceExternalRefWithContent(StringBuffer rncBuff) {
         StringBuffer tempBuff = new StringBuffer(rncBuff);
-        while (tempBuff.indexOf("external") > -1) {
-        		 Pattern pattern = Pattern.compile("(\\s*external\\s*\")(.*?)(\")");
-            Matcher matcher = pattern.matcher(tempBuff.toString());
-            StringBuffer sb = new StringBuffer();
-            while (matcher.find()) {
-                StringBuffer extFileContent = getFileContent(matcher.group(2));
-                matcher.appendReplacement(sb, extFileContent != null ? extFileContent.toString() : "");
-            }
-            matcher.appendTail(sb);
-            tempBuff = sb;
+        int step = 0;
+        Pattern pattern = Pattern.compile("(\\s*external\\s*\")(.*?)(\")");
+        if (tempBuff != null) {
+        	    while (pattern.matcher(tempBuff.toString()).find() && step++ < MAX_COUNT) {
+        		Matcher matcher = pattern.matcher(tempBuff.toString());
+        		StringBuffer sb = new StringBuffer();
+        		while (matcher.find()) {
+        			StringBuffer extFileContent = getFileContent(matcher.group(2));
+        			matcher.appendReplacement(sb, extFileContent != null ? extFileContent.toString() : "");
+        		}
+        		matcher.appendTail(sb);
+        		tempBuff = sb;
+        	}
         }
-		 		 return tempBuff;
+		return tempBuff;
 	}
     
     private StringBuffer getFileContent(String filePath) {
@@ -407,7 +410,7 @@ public class Convert2Wsdl {
             }
 
        }
-		 		 return str;
+	   return str;
     }
 
 }
