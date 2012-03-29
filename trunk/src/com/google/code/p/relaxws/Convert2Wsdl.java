@@ -48,6 +48,7 @@ public class Convert2Wsdl {
     private PrintWriter out;
     private ASTservice tree;
     private final int MAX_COUNT = 3;
+    private String encoding;
 
     private static void usage (String reason) {
         if (reason != null)
@@ -139,6 +140,7 @@ public class Convert2Wsdl {
         Convert2Wsdl converter = new Convert2Wsdl();
         converter.out = out;
         converter.tree = tree;
+        converter.encoding=encoding;
         converter.convert();
         out.flush();
         out.close();
@@ -367,7 +369,7 @@ public class Convert2Wsdl {
     private StringBuffer replaceExternalRefWithContent(StringBuffer rncBuff) {
         StringBuffer tempBuff = new StringBuffer(rncBuff);
         int step = 0;
-        Pattern pattern = Pattern.compile("(\\s*external\\s*\")(.*?)(\")");
+        Pattern pattern = Pattern.compile("(\\s*external\\s+\")(.*?)(\")");
         if (tempBuff != null) {
         	    while (pattern.matcher(tempBuff.toString()).find() && step++ < MAX_COUNT) {
         		Matcher matcher = pattern.matcher(tempBuff.toString());
@@ -382,36 +384,23 @@ public class Convert2Wsdl {
         }
 		return tempBuff;
 	}
-    
-    private StringBuffer getFileContent(String filePath) {
-        File file = new File(filePath.substring(8));
-        BufferedInputStream bin = null;
-        StringBuffer str = new StringBuffer();
-        try {
-		          FileInputStream fin = new FileInputStream(file);
-		          bin = new BufferedInputStream(fin);
-		          byte[] contents = new byte[1024];
-		          int bytesRead=0;
-
-		          while( (bytesRead = bin.read(contents)) != -1){
-		             str.append(new StringBuffer(new String(contents, 0, bytesRead)));
-		          }
-		          return str;
-
-        } catch (FileNotFoundException e) {
-            System.out.println("File not found" + e);
-        } catch (IOException e) {
-            System.out.println("Exception while reading the file " + e);
-        } finally {
-           try{
-               if(bin != null) bin.close();
-            } catch(IOException e) {
-             System.out.println("Error while closing the stream :" + e);
-            }
-
-       }
-	   return str;
-    }
+	
+	private StringBuffer getFileContent(String filePath) {
+		try {
+			if(filePath.startsWith("file:///"))filePath=filePath.substring(8);
+			BufferedReader r=new BufferedReader( new InputStreamReader( new FileInputStream(filePath) , encoding ) );
+			StringBuffer out=new StringBuffer();
+			int ch;
+			while( ( ch = r.read() )!=-1 ) {
+				out.append( (char)ch );
+			}
+			r.close();
+			return out;
+		}catch(Exception e){
+			fail("Can't read file: "+new File(filePath).getAbsolutePath()+"\n\t"+e);
+			return null;
+		}
+	}
 
 }
 
