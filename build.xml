@@ -21,12 +21,11 @@ Example build (OS-X):
 	<property name="javacc.url" value="http://java.net/projects/javacc/downloads/download/${javacc.ver}.zip" />
 
 	<property name="javacc.home" location="depends/${javacc.ver}"/>
+	<property name="javacc.zip" location="${javacc.ver}.zip"/>
 	
 	<property name="build.home" value="${basedir}/build"/>
 	<property name="dist.base" value="${build.home}/dist"/>
 	<property name="dist.home" value="${dist.base}/${release.name}"/>
-
-	<available property="javacc.exists" file="depends/${javacc.ver}/bin" />
 
 	<path id="compile.classpath">
 		<fileset dir="lib" includes="*.jar"/>
@@ -37,19 +36,37 @@ Example build (OS-X):
 		<pathelement path="${build.home}/classes"/>
 	</path>
 
+	<condition property="run-get-jcc" >
+		<not>
+			<or>
+				<available file="${javacc.home}/bin" type="dir"/>
+				<available file="${javacc.zip}" type="dir"/>
+			</or>
+		</not>
+	</condition>
+
+	<condition property="run-ext-jcc" >
+		<and>
+			<not><available file="${javacc.home}/bin" type="dir"/></not>
+			<available file="${javacc.zip}" type="dir"/>
+		</and>
+	</condition>
+
 	<target name="clean">
 		<delete dir="build"/>
 	</target>
 	
-	<target name="get-depends" unless="javacc.exists" >
-		<mkdir dir="depends"/>
-		<get src="${javacc.url}" dest="depends/${javacc.ver}.zip" />
-		<unzip src="depends/${javacc.ver}.zip" dest="depends/" />
-		<delete file="depends/${javacc.ver}.zip"/>
+	<target name="get-jcc" if="run-get-jcc" >
+		<get src="${javacc.url}" dest="${javacc.ver}.zip" />
 	</target>
 	
+	<target name="ext-jcc" if="run-ext-jcc">
+		<mkdir dir="depends"/>
+		<unzip src="${javacc.zip}" dest="depends/" />
+		<delete file="${javacc.zip}"/>
+	</target>
 
-	<target name="build" depends="get-depends">
+	<target name="build" depends="get-jcc,ext-jcc">
 		<mkdir dir="build"/>
 
 		<jjtree
