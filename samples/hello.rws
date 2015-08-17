@@ -1,9 +1,11 @@
 #hello
-namespace http://code.google.com/p/relax-ws/samples/hello
+namespace http://hello/world/1
 
  ## Hello service documentation ПривеД3!
 service Hello {
+	
     types {
+		namespace ab = "http://hello/world/2"
         # Only single line comments come through.
         OtherElementType = external "file:///./samples/world.rnc"
 			
@@ -16,7 +18,7 @@ service Hello {
             in SayHello {
             	## hello element ПривеД2!
                 element greetingMessage {xsd:string},
-                element date {xsd:date},
+                element ab:date {xsd:date},
 				element to {OtherElementType}
             }
 

@@ -343,12 +343,16 @@ public class Convert2Wsdl {
         }
         OutputFormat of = new XsdOutputFormat();
         File xsdOutput = File.createTempFile("relaxwiz", ".xsd");
-        OutputDirectory od = new LocalOutputDirectory(sc.getMainUri(),
-                                                      xsdOutput,
-                                                      "xsd",
-                                                      "UTF-8",
-                                                      80,
-                                                      2);
+        OutputDirectory od = 
+        		new com.google.code.p.relaxws.trang.SingleFileOutputDirectory(
+        		//new LocalOutputDirectory(
+					sc.getMainUri(),
+					xsdOutput,
+					"xsd",
+					"UTF-8",
+					80, //line
+					2   //indent
+				);
         String[] outParams = new String[]{new URL("file", "", xsdOutput.getAbsolutePath()).toString()};
         of.output(sc, od, new String[]{}, "rnc", handler);
 
@@ -357,12 +361,13 @@ public class Convert2Wsdl {
         String line;
         StringBuffer buf = new StringBuffer();
         while ((line = reader.readLine()) != null) {
-            if (line.startsWith("<?xml")) {
+            if (line.startsWith("<?xml") || line.matches("\\s*<xs:import\\s+[^>]+>")) {
                 continue;
             }
             buf.append (line).append ('\n');
         }
         reader.close();
+        
         return buf.toString();
     }
     

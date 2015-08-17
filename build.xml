@@ -119,7 +119,7 @@ Example build (OS-X):
 
 	</target>
 
-	<target name="test" depends="build" description="test">
+	<target name="test" description="test">
 
 		<java classpathref="test.classpath"
 			  classname="com.google.code.p.relaxws.Convert2Wsdl" fork="true">
