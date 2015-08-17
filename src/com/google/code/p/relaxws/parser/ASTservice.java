@@ -5,11 +5,15 @@ package com.google.code.p.relaxws.parser;
 import com.google.code.p.relaxws.parser.SimpleNode;
 import com.google.code.p.relaxws.parser.RelaxWizParser;
 
+import java.util.LinkedHashMap;
+
 public class ASTservice extends SimpleNode {
 
     private String name;
     private String namespace;
     private String documentation=null;
+    
+    private LinkedHashMap<String,String> nsMap = new LinkedHashMap();
 
     public ASTservice(int id) {
         super(id);
@@ -28,12 +32,24 @@ public class ASTservice extends SimpleNode {
         if(this.documentation==null)documentation=""+name+" service";
     }
 
+    //returns default namespace
     public String getNamespace() {
         return namespace;
     }
 
+    //set default namespace
     public void setNamespace(String namespace) {
         this.namespace = namespace;
+    }
+
+    public void setNamespace(String prefix,String uri) {
+    	String old=nsMap.get(prefix);
+    	if(old!=null && !old.equals(uri))throw new RuntimeException("prefix: `"+prefix+"` already used for namespace: `"+old+"`. new value: `"+uri+"`");
+    	nsMap.put(prefix,uri);
+    }
+
+    public LinkedHashMap getNamespaces() {
+        return nsMap;
     }
 
     public String getDocumentation() {

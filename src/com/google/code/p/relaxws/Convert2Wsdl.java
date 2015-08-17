@@ -31,6 +31,7 @@ import java.io.*;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -171,10 +172,18 @@ public class Convert2Wsdl {
         Set<String> messageNames = new HashSet<String>();
         StringBuffer rncBuff = new StringBuffer();
         rncBuff.append ("default namespace = \"" + ns + "\"\n");
+        //append all defined namespaces on the level of service
+        for(Map.Entry<String,String> nse : (Set<Map.Entry>)tree.getNamespaces().entrySet()){
+	        rncBuff.append ("namespace "+nse.getKey()+"= \"" + nse.getValue() + "\"\n");
+        	System.out.println(""+nse);
+        }
 //        rncBuff.append ("(\n");
         for (Node portNode: tree.getChildren()) {
             if (portNode instanceof ASTtypesDecl) {
                 rncBuff.append(((ASTtypesDecl) portNode).getRnc());
+                continue;
+            }
+            if (portNode instanceof ASTnsDecl) {
                 continue;
             }
 
@@ -230,6 +239,9 @@ public class Convert2Wsdl {
         for (Node portNode: tree.getChildren()) {
 
             if (portNode instanceof ASTtypesDecl) {
+                continue;
+            }
+            if (portNode instanceof ASTnsDecl) {
                 continue;
             }
 

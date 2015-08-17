@@ -118,11 +118,14 @@ ASTservice service () :
 {/*@bgen(jjtree) service */
     try {
 /*@egen*/
+/*
     (<NAMESPACE> t=<IDENTIFIER>
     {
-        jjtn000.setNamespace (t.image);
+        jjtThis.setNamespace (t.image);
     }
     )?
+*/
+    (<NAMESPACE> nsDecl(jjtn000))*
     
     t=<SERVICE>
     {
@@ -161,6 +164,42 @@ ASTservice service () :
     }
 /*@egen*/
 }
+
+void nsDecl(ASTservice service) :
+{/*@bgen(jjtree) nsDecl */
+        ASTnsDecl jjtn000 = new ASTnsDecl(this, JJTNSDECL);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);
+/*@egen*/
+	Token i1=null;
+    Token i2=null;
+}
+{/*@bgen(jjtree) nsDecl */
+        try {
+/*@egen*/
+	//(i1=<IDENTIFIER> "=")? ("\"")? i2=<IDENTIFIER> ("\"")?
+	//(key=<IDENTIFIER> "=")? ("\"")? val=<IDENTIFIER> ("\"")?
+	("\"")? i1=<IDENTIFIER> ("\"")? [ ("=") ("\"") i2=<IDENTIFIER> ("\"") ]/*@bgen(jjtree)*/
+    {
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
+    }
+/*@egen*/
+    {
+    	if(i2==null){
+	    	service.setNamespace(i1.image);
+    	}else{
+	    	service.setNamespace(i1.image,i2.image);
+    	}
+    }/*@bgen(jjtree)*/
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/
+}
+
 
 void typesDecl() :
 {/*@bgen(jjtree) typesDecl */

@@ -67,6 +67,8 @@ public interface RelaxWizParserConstants {
     "<DIGIT>",
     "<SYMBOL>",
     "<TRAILING_COMMENT>",
+    "\"\\\"\"",
+    "\"=\"",
   };
 
 }

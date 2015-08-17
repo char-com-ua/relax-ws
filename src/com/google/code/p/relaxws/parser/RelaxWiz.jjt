@@ -108,11 +108,14 @@ ASTservice service () :
     Token t;
 }
 {
+/*
     (<NAMESPACE> t=<IDENTIFIER>
     {
         jjtThis.setNamespace (t.image);
     }
     )?
+*/
+    (<NAMESPACE> nsDecl(jjtThis))*
     
     t=<SERVICE>
     {
@@ -126,6 +129,25 @@ ASTservice service () :
         return jjtThis;
     }
 }
+
+void nsDecl(ASTservice service) :
+{
+	Token i1=null;
+    Token i2=null;
+}
+{
+	//(i1=<IDENTIFIER> "=")? ("\"")? i2=<IDENTIFIER> ("\"")?
+	//(key=<IDENTIFIER> "=")? ("\"")? val=<IDENTIFIER> ("\"")?
+	("\"")? i1=<IDENTIFIER> ("\"")? [ ("=") ("\"") i2=<IDENTIFIER> ("\"") ]
+    {
+    	if(i2==null){
+	    	service.setNamespace(i1.image);
+    	}else{
+	    	service.setNamespace(i1.image,i2.image);
+    	}
+    }
+}
+
 
 void typesDecl() :
 {}

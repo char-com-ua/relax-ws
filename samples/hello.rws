@@ -1,11 +1,12 @@
-#hello
-namespace http://hello/world/1
+#just a comment line
 
- ## Hello service documentation ПривеД3!
+namespace "http://hello/world/1"
+namespace ab = "http://hello/world/2"
+
+ ## Hello service documentation
 service Hello {
 	
     types {
-		namespace ab = "http://hello/world/2"
         # Only single line comments come through.
         OtherElementType = external "file:///./samples/world.rnc"
 			
@@ -13,10 +14,10 @@ service Hello {
 	
 
     port {
-    	## hello ПривеД!
+    	## hello operation
         operation SayHello {
             in SayHello {
-            	## hello element ПривеД2!
+            	## hello element
                 element greetingMessage {xsd:string},
                 element ab:date {xsd:date},
 				element to {OtherElementType}
