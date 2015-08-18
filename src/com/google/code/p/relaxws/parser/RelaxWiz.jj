@@ -73,6 +73,7 @@ PARSER_END (RelaxWizParser)
 <*> TOKEN :
 {
         <NAMESPACE: "namespace">
+    |   <SET:       "set">
     |   <SERVICE:   "service">
     |   <PORT:      "port">
     |   <OPERATION: "operation">
@@ -113,18 +114,17 @@ ASTservice service () :
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);
 /*@egen*/
-    Token t;
+    Token t=null;
+    Token v=null;
 }
 {/*@bgen(jjtree) service */
     try {
 /*@egen*/
-/*
-    (<NAMESPACE> t=<IDENTIFIER>
+    (<SET> t=<IDENTIFIER> ("=") v=<IDENTIFIER>)*
     {
-        jjtThis.setNamespace (t.image);
+    	jjtn000.setOption(t.image, v.image);
     }
-    )?
-*/
+    
     (<NAMESPACE> nsDecl(jjtn000))*
     
     t=<SERVICE>
@@ -133,14 +133,14 @@ ASTservice service () :
 	    	jjtn000.setDocumentation(t.specialToken.image.replaceFirst("#*", "").trim() );
 	    }catch(Exception e){}
     }
-    t=<IDENTIFIER> <LBRACE> (typesDecl())? (portDecl())+ <RBRACE>/*@bgen(jjtree)*/
+    t=<IDENTIFIER> { jjtn000.setName (t.image); } 
+    <LBRACE> (typesDecl())? (portDecl(jjtn000))+ <RBRACE>/*@bgen(jjtree)*/
     {
       jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;
     }
 /*@egen*/
     {
-        jjtn000.setName (t.image);
         return jjtn000;
     }/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
@@ -288,7 +288,7 @@ void rnc() {/*@bgen(jjtree) rnc */
 /*@egen*/
 }
 
-void portDecl() :
+void portDecl(ASTservice service) :
 {/*@bgen(jjtree) portDecl */
     ASTportDecl jjtn000 = new ASTportDecl(this, JJTPORTDECL);
     boolean jjtc000 = true;
@@ -306,9 +306,7 @@ void portDecl() :
     }
 /*@egen*/
     {
-        if (t != null) {
-            jjtn000.setName (t.image);
-        } 
+        service.addPort( t==null?null:t.image, jjtn000 );
     }/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
       if (jjtc000) {

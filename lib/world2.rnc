@@ -1,0 +1,7 @@
+# the other element type
+namespace ab = "http://hello/world/2"
+
+            GGG = element ab:SayHello2 {
+            	## hello element
+                element date2 {xsd:date}
+            }

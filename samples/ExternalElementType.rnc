@@ -1,0 +1,13 @@
+# the other element type
+
+namespace ab = "http://hello/world/2"
+
+ExternalElementType = 
+	element ab:OtherElement {
+		## id
+		element id {xsd:string},
+		## sname
+		element sname {xsd:string},
+		## fname
+		element fname {xsd:string}
+	}

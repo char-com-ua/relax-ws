@@ -1,15 +1,15 @@
 #just a comment line
 
+set fully-qualified = false
+
 namespace "http://hello/world/1"
-namespace ab = "http://hello/world/2"
 
  ## Hello service documentation
 service Hello {
 	
     types {
-        # Only single line comments come through.
-        OtherElementType = external "file:///./samples/world.rnc"
-			
+    	# include external resource
+    	external "file:///./samples/ExternalElementType.rnc"
     }
 	
 
@@ -19,8 +19,8 @@ service Hello {
             in SayHello {
             	## hello element
                 element greetingMessage {xsd:string},
-                element ab:date {xsd:date},
-				element to {OtherElementType}
+                element date {xsd:date},
+				element to {ExternalElementType}
             }
 
             out SayHelloResponse {

@@ -10,19 +10,37 @@ import java.util.LinkedHashMap;
 public class ASTservice extends SimpleNode {
 
     private String name;
-    private String namespace;
+    //default namespace
+    private String namespace=null;
     private String documentation=null;
-    
+    //additional namespaces
     private LinkedHashMap<String,String> nsMap = new LinkedHashMap();
+    //port set
+    private LinkedHashMap<String,ASTportDecl> portMap = new LinkedHashMap();
+    //options
+    private LinkedHashMap<String,String> optMap = new LinkedHashMap();
+    //valid options
+    private static LinkedHashMap<String,String> stOptMap = new LinkedHashMap();
+    
+    static{
+    	stOptMap.put("fully-qualified","^(true|false)$");
+    }
+    
+    private void init(){
+    	//set default options
+    	setOption("fully-qualified","true");
+    }
 
     public ASTservice(int id) {
         super(id);
+        init();
     }
 
     public ASTservice(RelaxWizParser p, int id) {
         super(p, id);
+        init();
     }
-
+    
     public String getName() {
         return name;
     }
@@ -30,26 +48,58 @@ public class ASTservice extends SimpleNode {
     public void setName(String name) {
         this.name = name;
         if(this.documentation==null)documentation=""+name+" service";
+        if(this.namespace==null)setNamespace("http://tempuri.org/" + name);
     }
 
+
+    //set default service namespace
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
+        setNamespace("tns",namespace);
+    }
     //returns default namespace
     public String getNamespace() {
         return namespace;
     }
 
-    //set default namespace
-    public void setNamespace(String namespace) {
-        this.namespace = namespace;
-    }
-
+    //set custom service namespace
     public void setNamespace(String prefix,String uri) {
     	String old=nsMap.get(prefix);
     	if(old!=null && !old.equals(uri))throw new RuntimeException("prefix: `"+prefix+"` already used for namespace: `"+old+"`. new value: `"+uri+"`");
     	nsMap.put(prefix,uri);
     }
-
-    public LinkedHashMap getNamespaces() {
+	//returns custom namespaces
+    public LinkedHashMap<String,String> getNamespaces() {
         return nsMap;
+    }
+    
+
+    //set option
+    public void setOption(String key,String value) {
+    	String matcher = stOptMap.get(key);
+    	if(matcher==null)throw new RuntimeException("unsupported option: `"+key+"`");
+    	if(!value.matches(matcher))throw new RuntimeException("wrong value: `"+value+"` for the option `"+key+"`. Valid expression: `"+matcher+"`");
+    	optMap.put(key,value);
+    }
+    
+    public String getOption(String key) {
+    	if(!optMap.containsKey(key))throw new RuntimeException("wrong option: `"+key+"`");
+    	return optMap.get(key);
+    }
+    
+    public void addPort(String name, ASTportDecl port){
+    	if(name==null || name.length()==0)name=this.name+"Port";
+    	if(portMap.containsKey(name))throw new RuntimeException("The port with name `"+name+"` already defined. Please rename one.");
+    	port.setName(name);
+    	portMap.put(name,port);
+    }
+    
+    public java.util.Collection<ASTportDecl> getPorts(){
+    	return (java.util.Collection<ASTportDecl>) portMap.values();
+    }
+    
+    public int getPortCount(){
+    	return portMap.size();
     }
 
     public String getDocumentation() {

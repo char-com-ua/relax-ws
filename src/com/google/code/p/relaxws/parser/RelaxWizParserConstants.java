@@ -13,33 +13,35 @@ public interface RelaxWizParserConstants {
   /** RegularExpression Id. */
   int NAMESPACE = 6;
   /** RegularExpression Id. */
-  int SERVICE = 7;
+  int SET = 7;
   /** RegularExpression Id. */
-  int PORT = 8;
+  int SERVICE = 8;
   /** RegularExpression Id. */
-  int OPERATION = 9;
+  int PORT = 9;
   /** RegularExpression Id. */
-  int IN = 10;
+  int OPERATION = 10;
   /** RegularExpression Id. */
-  int OUT = 11;
+  int IN = 11;
   /** RegularExpression Id. */
-  int FAULT = 12;
+  int OUT = 12;
   /** RegularExpression Id. */
-  int TYPES = 13;
+  int FAULT = 13;
   /** RegularExpression Id. */
-  int LBRACE = 14;
+  int TYPES = 14;
   /** RegularExpression Id. */
-  int RBRACE = 15;
+  int LBRACE = 15;
   /** RegularExpression Id. */
-  int IDENTIFIER = 16;
+  int RBRACE = 16;
   /** RegularExpression Id. */
-  int LETTER = 17;
+  int IDENTIFIER = 17;
   /** RegularExpression Id. */
-  int DIGIT = 18;
+  int LETTER = 18;
   /** RegularExpression Id. */
-  int SYMBOL = 19;
+  int DIGIT = 19;
   /** RegularExpression Id. */
-  int TRAILING_COMMENT = 20;
+  int SYMBOL = 20;
+  /** RegularExpression Id. */
+  int TRAILING_COMMENT = 21;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -53,6 +55,7 @@ public interface RelaxWizParserConstants {
     "\"\\n\"",
     "\"\\r\\n\"",
     "\"namespace\"",
+    "\"set\"",
     "\"service\"",
     "\"port\"",
     "\"operation\"",
@@ -67,8 +70,8 @@ public interface RelaxWizParserConstants {
     "<DIGIT>",
     "<SYMBOL>",
     "<TRAILING_COMMENT>",
-    "\"\\\"\"",
     "\"=\"",
+    "\"\\\"\"",
   };
 
 }

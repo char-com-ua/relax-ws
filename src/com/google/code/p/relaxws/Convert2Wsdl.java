@@ -153,9 +153,6 @@ public class Convert2Wsdl {
 
     private void convert() throws Exception {
 
-        if (tree.getNamespace() == null) {
-            tree.setNamespace("http://tempuri.org/" + tree.getName());
-        }
         String ns = tree.getNamespace();
 
         out.print ("<?xml version=\"1.0\"?>\n");
@@ -171,11 +168,13 @@ public class Convert2Wsdl {
         // Make a pass through and assign all message names, and build proper rnc block
         Set<String> messageNames = new HashSet<String>();
         StringBuffer rncBuff = new StringBuffer();
-        rncBuff.append ("default namespace = \"" + ns + "\"\n");
+        if( tree.getOption("fully-qualified").equals("true") ){
+        	rncBuff.append ("default namespace = \"" + ns + "\"\n");
+        }
+        
         //append all defined namespaces on the level of service
-        for(Map.Entry<String,String> nse : (Set<Map.Entry>)tree.getNamespaces().entrySet()){
+        for(Map.Entry<String,String> nse : tree.getNamespaces().entrySet()){
 	        rncBuff.append ("namespace "+nse.getKey()+"= \"" + nse.getValue() + "\"\n");
-        	System.out.println(""+nse);
         }
 //        rncBuff.append ("(\n");
         for (Node portNode: tree.getChildren()) {
@@ -188,11 +187,6 @@ public class Convert2Wsdl {
             }
 
             ASTportDecl port = (ASTportDecl) portNode;
-
-            // patch up default name if not set.
-            if (port.getName() == null) {
-                port.setName (tree.getName() + "Port");
-            }
 
             // enumerate operations in this port
             for (Node opNode: port.getChildren()) {
@@ -215,7 +209,7 @@ public class Convert2Wsdl {
                     }
 
                     rncBuff.append (message.getName() + " = ");
-                    rncBuff.append ("element " + message.getName() + " {\n");
+                    rncBuff.append ("element tns:" + message.getName() + " {\n");
                     String s = message.getRnc();
                     if (s.trim().length() == 0) {
                         s = "text";
@@ -229,6 +223,8 @@ public class Convert2Wsdl {
         // convert rnc to xsd
         rncBuff = replaceExternalRefWithContent(rncBuff);
         
+        System.out.println(rncBuff.toString());
+        
         String xsdText = toXsd(rncBuff.toString());
         out.print (xsdText);
 
@@ -236,6 +232,7 @@ public class Convert2Wsdl {
 
         // declare messages for each in and out of each operation for each port (must be unique)
         out.println ();
+        /*
         for (Node portNode: tree.getChildren()) {
 
             if (portNode instanceof ASTtypesDecl) {
@@ -246,7 +243,8 @@ public class Convert2Wsdl {
             }
 
             ASTportDecl port = (ASTportDecl) portNode;
-
+        */
+        for(ASTportDecl port: tree.getPorts()) {
             // enumerate operations in this port
             for (Node opNode: port.getChildren()) {
                 ASToperationDecl op = (ASToperationDecl) opNode;
@@ -318,7 +316,7 @@ public class Convert2Wsdl {
             out.println ("  </binding>");
 
             out.println();
-            out.println ("  <service name=\"" + tree.getName() + (tree.jjtGetNumChildren()==1?"":port.getName()+"Service") + "\">\n" +
+            out.println ("  <service name=\"" + tree.getName() + ( tree.getPortCount()==1?"":port.getName() ) + "\">\n" +
                     "    <port name=\"" + port.getName() + "\" binding=\"tns:" + port.getName() + "SoapBinding\">\n" +
                     "      <soap:address location=\"http://example.com/" + tree.getName() + "\"/>\n" +
                     "    </port>\n" +
@@ -399,6 +397,10 @@ public class Convert2Wsdl {
         		tempBuff = sb;
         	}
         }
+        
+		//String s=new File("D:/11/svn/EXT/relax-ws/trunk/lib/world2.rnc").getText()
+		//s.replaceFirst('(?sm)(^\\s*((#[^\r\n]*|namespace\\s+\\w+\\s*=\\s*\"[^\"]*\"[ \t\f]*)[\r\n]*)+)(.*)','$1')
+        
 		return tempBuff;
 	}
 	

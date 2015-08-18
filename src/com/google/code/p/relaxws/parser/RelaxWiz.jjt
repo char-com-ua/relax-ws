@@ -69,6 +69,7 @@ PARSER_END (RelaxWizParser)
 <*> TOKEN :
 {
         <NAMESPACE: "namespace">
+    |   <SET:       "set">
     |   <SERVICE:   "service">
     |   <PORT:      "port">
     |   <OPERATION: "operation">
@@ -105,16 +106,15 @@ SPECIAL_TOKEN: /* COMMENTS */
 
 ASTservice service () :
 {
-    Token t;
+    Token t=null;
+    Token v=null;
 }
 {
-/*
-    (<NAMESPACE> t=<IDENTIFIER>
+    (<SET> t=<IDENTIFIER> ("=") v=<IDENTIFIER>)*
     {
-        jjtThis.setNamespace (t.image);
+    	jjtThis.setOption(t.image, v.image);
     }
-    )?
-*/
+    
     (<NAMESPACE> nsDecl(jjtThis))*
     
     t=<SERVICE>
@@ -123,9 +123,9 @@ ASTservice service () :
 	    	jjtThis.setDocumentation(t.specialToken.image.replaceFirst("#*", "").trim() );
 	    }catch(Exception e){}
     }
-    t=<IDENTIFIER> <LBRACE> (typesDecl())? (portDecl())+ <RBRACE>
+    t=<IDENTIFIER> { jjtThis.setName (t.image); } 
+    <LBRACE> (typesDecl())? (portDecl(jjtThis))+ <RBRACE>
     {
-        jjtThis.setName (t.image);
         return jjtThis;
     }
 }
@@ -187,16 +187,14 @@ void rnc() {
     rncBuffer.append (s);
 }
 
-void portDecl() :
+void portDecl(ASTservice service) :
 {
     Token t = null;
 }
 {
     <PORT> (t=<IDENTIFIER>)? <LBRACE> (operationDecl())* <RBRACE>
     {
-        if (t != null) {
-            jjtThis.setName (t.image);
-        } 
+        service.addPort( t==null?null:t.image, jjtThis );
     }
 }
 
