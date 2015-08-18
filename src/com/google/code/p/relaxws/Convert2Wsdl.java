@@ -182,7 +182,7 @@ public class Convert2Wsdl {
                 rncBuff.append(((ASTtypesDecl) portNode).getRnc());
                 continue;
             }
-            if (portNode instanceof ASTnsDecl) {
+            if ( !(portNode instanceof ASTportDecl) ) {
                 continue;
             }
 
@@ -223,8 +223,6 @@ public class Convert2Wsdl {
         // convert rnc to xsd
         rncBuff = replaceExternalRefWithContent(rncBuff);
         
-        System.out.println(rncBuff.toString());
-        
         String xsdText = toXsd(rncBuff.toString());
         out.print (xsdText);
 
@@ -232,18 +230,6 @@ public class Convert2Wsdl {
 
         // declare messages for each in and out of each operation for each port (must be unique)
         out.println ();
-        /*
-        for (Node portNode: tree.getChildren()) {
-
-            if (portNode instanceof ASTtypesDecl) {
-                continue;
-            }
-            if (portNode instanceof ASTnsDecl) {
-                continue;
-            }
-
-            ASTportDecl port = (ASTportDecl) portNode;
-        */
         for(ASTportDecl port: tree.getPorts()) {
             // enumerate operations in this port
             for (Node opNode: port.getChildren()) {
@@ -382,16 +368,31 @@ public class Convert2Wsdl {
     }
     
     private StringBuffer replaceExternalRefWithContent(StringBuffer rncBuff) {
+    	//i hate this part of code
+    	//trang does not support `external` keyword
+    	//this is a hot fix
+    	
+    	StringBuffer nsBuff = new StringBuffer(); //all namespace declarations from externals must go first.
         StringBuffer tempBuff = new StringBuffer(rncBuff);
         int step = 0;
-        Pattern pattern = Pattern.compile("(\\s*external\\s+\")(.*?)(\")");
+        Pattern pattern = Pattern.compile("([# \t\f]*external\\s+\")(.*?)(\")");
+        Pattern nsPattern = Pattern.compile("(?sm)(^\\s*((#[^\r\n]*|namespace\\s+\\w+\\s*=\\s*\"[^\"]*\"[ \t\f]*)[\r\n]*)+)(.*)");
         if (tempBuff != null) {
         	    while (pattern.matcher(tempBuff.toString()).find() && step++ < MAX_COUNT) {
         		Matcher matcher = pattern.matcher(tempBuff.toString());
         		StringBuffer sb = new StringBuffer();
         		while (matcher.find()) {
-        			StringBuffer extFileContent = getFileContent(matcher.group(2));
-        			matcher.appendReplacement(sb, extFileContent != null ? extFileContent.toString() : "");
+        			if( !matcher.group(1).trim().startsWith("#") ) { 
+        				//not commented
+						String extFileContent = getFileContent(matcher.group(2));
+						Matcher nsMatcher = nsPattern.matcher(extFileContent);
+						if(nsMatcher.matches()){
+							nsBuff.append(nsMatcher.replaceFirst("$1"));
+							extFileContent = nsMatcher.replaceFirst("$4"); //keep the rest
+						}
+						matcher.appendReplacement(sb, extFileContent );
+        			}else matcher.appendReplacement(sb, "\n" );
+        			
         		}
         		matcher.appendTail(sb);
         		tempBuff = sb;
@@ -400,11 +401,11 @@ public class Convert2Wsdl {
         
 		//String s=new File("D:/11/svn/EXT/relax-ws/trunk/lib/world2.rnc").getText()
 		//s.replaceFirst('(?sm)(^\\s*((#[^\r\n]*|namespace\\s+\\w+\\s*=\\s*\"[^\"]*\"[ \t\f]*)[\r\n]*)+)(.*)','$1')
-        
+        tempBuff.insert(0,nsBuff);
 		return tempBuff;
 	}
 	
-	private StringBuffer getFileContent(String filePath) {
+	private String getFileContent(String filePath) {
 		try {
 			if(filePath.startsWith("file:///"))filePath=filePath.substring(8);
 			BufferedReader r=new BufferedReader( new InputStreamReader( new FileInputStream(filePath) , encoding ) );
@@ -414,10 +415,10 @@ public class Convert2Wsdl {
 				out.append( (char)ch );
 			}
 			r.close();
-			return out;
+			return out.toString();
 		}catch(Exception e){
 			fail("Can't read file: "+new File(filePath).getAbsolutePath()+"\n\t"+e);
-			return null;
+			return ""; // non accessible code
 		}
 	}
 

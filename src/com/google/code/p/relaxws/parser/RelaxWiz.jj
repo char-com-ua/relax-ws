@@ -34,6 +34,13 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
 /*@egen*/
 
     private StringBuffer rncBuffer = new StringBuffer ();
+    private ASTservice localService = null;
+
+	/*returns parsed service*/
+	ASTservice root (){
+		if(localService==null)throw new RuntimeException("file not parsed yet?");
+		return localService; //return tree is already parsed
+	}
 
     public static void main (String[] args) throws ParseException, IOException {
         if (args.length == 0) {
@@ -108,6 +115,7 @@ SPECIAL_TOKEN: /* COMMENTS */
      <TRAILING_COMMENT: "#" (~["\n","\r"])* >
 }
 
+
 ASTservice service () :
 {/*@bgen(jjtree) service */
     ASTservice jjtn000 = new ASTservice(this, JJTSERVICE);
@@ -115,15 +123,11 @@ ASTservice service () :
     jjtree.openNodeScope(jjtn000);
 /*@egen*/
     Token t=null;
-    Token v=null;
 }
 {/*@bgen(jjtree) service */
     try {
 /*@egen*/
-    (<SET> t=<IDENTIFIER> ("=") v=<IDENTIFIER>)*
-    {
-    	jjtn000.setOption(t.image, v.image);
-    }
+    (<SET> optDecl(jjtn000))*
     
     (<NAMESPACE> nsDecl(jjtn000))*
     
@@ -141,6 +145,7 @@ ASTservice service () :
     }
 /*@egen*/
     {
+    	localService = jjtn000;//store parsed tree
         return jjtn000;
     }/*@bgen(jjtree)*/
     } catch (Throwable jjte000) {
@@ -162,6 +167,35 @@ ASTservice service () :
         jjtree.closeNodeScope(jjtn000, true);
       }
     }
+/*@egen*/
+}
+
+void optDecl(ASTservice service) :
+{/*@bgen(jjtree) optDecl */
+        ASToptDecl jjtn000 = new ASToptDecl(this, JJTOPTDECL);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);
+/*@egen*/
+	Token t=null;
+    Token v=null;
+}
+{/*@bgen(jjtree) optDecl */
+        try {
+/*@egen*/
+	t=<IDENTIFIER> ("=") ("\"") (v=<IDENTIFIER>)? ("\"")/*@bgen(jjtree)*/
+    {
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
+    }
+/*@egen*/
+    {
+		service.setOption(t.image, v==null?"":v.image);
+    }/*@bgen(jjtree)*/
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
 /*@egen*/
 }
 

@@ -1,6 +1,8 @@
 #just a comment line
 
-set fully-qualified = false
+set fully-qualified = "false"
+set in-suffix = ""
+set out-suffix = "Return"
 
 namespace "http://hello/world/1"
 
@@ -16,14 +18,14 @@ service Hello {
     port {
     	## hello operation
         operation SayHello {
-            in SayHello {
+            in {
             	## hello element
                 element greetingMessage {xsd:string},
                 element date {xsd:date},
 				element to {ExternalElementType}
             }
 
-            out SayHelloResponse {
+            out {
             	## hello element documentation 2
                 element message {xsd:string}            
             }

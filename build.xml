@@ -18,7 +18,10 @@ Example build (OS-X):
 	<property name="app.version" value="0.2.2"/>
 	<property name="release.name" value="${ant.project.name}-${app.version}"/>
 	<property name="javacc.ver" value="javacc-5.0" />
-	<property name="javacc.url" value="http://java.net/projects/javacc/downloads/download/${javacc.ver}.zip" />
+	
+	<!--property name="javacc.url" value="http://java.net/projects/javacc/downloads/download/${javacc.ver}.zip" /-->
+	<property name="javacc.url" value="http://java.net/downloads/javacc/${javacc.ver}.zip" />
+	
 
 	<property name="javacc.home" location="depends/${javacc.ver}"/>
 	<property name="javacc.zip" location="${javacc.ver}.zip"/>
@@ -40,7 +43,7 @@ Example build (OS-X):
 		<not>
 			<or>
 				<available file="${javacc.home}/bin" type="dir"/>
-				<available file="${javacc.zip}" type="dir"/>
+				<available file="${javacc.zip}" type="file"/>
 			</or>
 		</not>
 	</condition>
@@ -48,7 +51,7 @@ Example build (OS-X):
 	<condition property="run-ext-jcc" >
 		<and>
 			<not><available file="${javacc.home}/bin" type="dir"/></not>
-			<available file="${javacc.zip}" type="dir"/>
+			<available file="${javacc.zip}" type="file"/>
 		</and>
 	</condition>
 

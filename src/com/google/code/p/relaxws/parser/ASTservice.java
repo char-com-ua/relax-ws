@@ -24,11 +24,17 @@ public class ASTservice extends SimpleNode {
     
     static{
     	stOptMap.put("fully-qualified","^(true|false)$");
+    	stOptMap.put("in-suffix",".*");
+    	stOptMap.put("out-suffix",".*");
+    	stOptMap.put("fault-suffix",".*");
     }
     
     private void init(){
     	//set default options
     	setOption("fully-qualified","true");
+    	setOption("in-suffix","Request");
+    	setOption("out-suffix","Response");
+    	setOption("fault-suffix","Fault");
     }
 
     public ASTservice(int id) {

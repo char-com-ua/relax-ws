@@ -59,9 +59,9 @@ public class ASTMessageDef extends SimpleNode {
 
     public void setDefaultName(String operation) {
         switch (type) {
-            case In: setName (operation + "Request"); break;
-            case Out: setName (operation + "Response"); break;
-            case Fault: setName (operation + "Error"); break;
+            case In: setName (operation + parser.root().getOption("in-suffix") ); break;
+            case Out: setName (operation + parser.root().getOption("out-suffix") ); break;
+            case Fault: setName (operation + parser.root().getOption("fault-suffix") ); break;
             default:
                 throw new IllegalArgumentException ("Unknown message type.");
         }

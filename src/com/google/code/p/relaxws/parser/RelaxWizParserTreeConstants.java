@@ -4,17 +4,19 @@ package com.google.code.p.relaxws.parser;
 public interface RelaxWizParserTreeConstants
 {
   public int JJTSERVICE = 0;
-  public int JJTNSDECL = 1;
-  public int JJTTYPESDECL = 2;
-  public int JJTSCHEMADECL = 3;
-  public int JJTRNC = 4;
-  public int JJTPORTDECL = 5;
-  public int JJTOPERATIONDECL = 6;
-  public int JJTMESSAGEDEF = 7;
+  public int JJTOPTDECL = 1;
+  public int JJTNSDECL = 2;
+  public int JJTTYPESDECL = 3;
+  public int JJTSCHEMADECL = 4;
+  public int JJTRNC = 5;
+  public int JJTPORTDECL = 6;
+  public int JJTOPERATIONDECL = 7;
+  public int JJTMESSAGEDEF = 8;
 
 
   public String[] jjtNodeName = {
     "service",
+    "optDecl",
     "nsDecl",
     "typesDecl",
     "schemaDecl",
@@ -24,4 +26,4 @@ public interface RelaxWizParserTreeConstants
     "MessageDef",
   };
 }
-/* JavaCC - OriginalChecksum=08e38d8b9c1e787a0267446ee7efc130 (do not edit this line) */
+/* JavaCC - OriginalChecksum=49e4f6e307aec99c692145351774f6b0 (do not edit this line) */

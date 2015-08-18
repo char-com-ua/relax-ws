@@ -7,6 +7,13 @@ import java.util.*;
 public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstants, RelaxWizParserConstants {/*@bgen(jjtree)*/
   protected JJTRelaxWizParserState jjtree = new JJTRelaxWizParserState();
     private StringBuffer rncBuffer = new StringBuffer ();
+    private ASTservice localService = null;
+
+        /*returns parsed service*/
+        ASTservice root (){
+                if(localService==null)throw new RuntimeException("file not parsed yet?");
+                return localService; //return tree is already parsed
+        }
 
     public static void main (String[] args) throws ParseException, IOException {
         if (args.length == 0) {
@@ -30,7 +37,6 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
     ASTservice jjtn000 = new ASTservice(this, JJTSERVICE);
     boolean jjtc000 = true;
     jjtree.openNodeScope(jjtn000);Token t=null;
-    Token v=null;
     try {
       label_1:
       while (true) {
@@ -43,11 +49,8 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
           break label_1;
         }
         jj_consume_token(SET);
-        t = jj_consume_token(IDENTIFIER);
-        jj_consume_token(22);
-        v = jj_consume_token(IDENTIFIER);
+        optDecl(jjtn000);
       }
-        jjtn000.setOption(t.image, v.image);
       label_2:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -91,6 +94,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
       jj_consume_token(RBRACE);
       jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;
+        localService = jjtn000;//store parsed tree
         {if (true) return jjtn000;}
     } catch (Throwable jjte000) {
       if (jjtc000) {
@@ -114,6 +118,35 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
     throw new Error("Missing return statement in function");
   }
 
+  final public void optDecl(ASTservice service) throws ParseException {
+ /*@bgen(jjtree) optDecl */
+        ASToptDecl jjtn000 = new ASToptDecl(this, JJTOPTDECL);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);Token t=null;
+    Token v=null;
+    try {
+      t = jj_consume_token(IDENTIFIER);
+      jj_consume_token(22);
+      jj_consume_token(23);
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case IDENTIFIER:
+        v = jj_consume_token(IDENTIFIER);
+        break;
+      default:
+        jj_la1[4] = jj_gen;
+        ;
+      }
+      jj_consume_token(23);
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
+                service.setOption(t.image, v==null?"":v.image);
+    } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+    }
+  }
+
   final public void nsDecl(ASTservice service) throws ParseException {
  /*@bgen(jjtree) nsDecl */
         ASTnsDecl jjtn000 = new ASTnsDecl(this, JJTNSDECL);
@@ -126,7 +159,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
         jj_consume_token(23);
         break;
       default:
-        jj_la1[4] = jj_gen;
+        jj_la1[5] = jj_gen;
         ;
       }
       i1 = jj_consume_token(IDENTIFIER);
@@ -135,7 +168,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
         jj_consume_token(23);
         break;
       default:
-        jj_la1[5] = jj_gen;
+        jj_la1[6] = jj_gen;
         ;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -146,7 +179,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
         jj_consume_token(23);
         break;
       default:
-        jj_la1[6] = jj_gen;
+        jj_la1[7] = jj_gen;
         ;
       }
       jjtree.closeNodeScope(jjtn000, true);
@@ -253,7 +286,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
         t = jj_consume_token(IDENTIFIER);
         break;
       default:
-        jj_la1[7] = jj_gen;
+        jj_la1[8] = jj_gen;
         ;
       }
       jj_consume_token(LBRACE);
@@ -264,7 +297,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
           ;
           break;
         default:
-          jj_la1[8] = jj_gen;
+          jj_la1[9] = jj_gen;
           break label_4;
         }
         operationDecl();
@@ -311,7 +344,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
         inDecl();
         break;
       default:
-        jj_la1[9] = jj_gen;
+        jj_la1[10] = jj_gen;
         ;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -319,7 +352,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
         outDecl();
         break;
       default:
-        jj_la1[10] = jj_gen;
+        jj_la1[11] = jj_gen;
         ;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -327,7 +360,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
         faultDecl();
         break;
       default:
-        jj_la1[11] = jj_gen;
+        jj_la1[12] = jj_gen;
         ;
       }
       jj_consume_token(RBRACE);
@@ -367,7 +400,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
         t = jj_consume_token(IDENTIFIER);
         break;
       default:
-        jj_la1[12] = jj_gen;
+        jj_la1[13] = jj_gen;
         ;
       }
       schemaDecl();
@@ -410,7 +443,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
         t = jj_consume_token(IDENTIFIER);
         break;
       default:
-        jj_la1[13] = jj_gen;
+        jj_la1[14] = jj_gen;
         ;
       }
       schemaDecl();
@@ -453,7 +486,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
         t = jj_consume_token(IDENTIFIER);
         break;
       default:
-        jj_la1[14] = jj_gen;
+        jj_la1[15] = jj_gen;
         ;
       }
       schemaDecl();
@@ -493,13 +526,13 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
   public Token jj_nt;
   private int jj_ntk;
   private int jj_gen;
-  final private int[] jj_la1 = new int[15];
+  final private int[] jj_la1 = new int[16];
   static private int[] jj_la1_0;
   static {
       jj_la1_init_0();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x80,0x40,0x4000,0x200,0x800000,0x800000,0x400000,0x20000,0x400,0x800,0x1000,0x2000,0x20000,0x20000,0x20000,};
+      jj_la1_0 = new int[] {0x80,0x40,0x4000,0x200,0x20000,0x800000,0x800000,0x400000,0x20000,0x400,0x800,0x1000,0x2000,0x20000,0x20000,0x20000,};
    }
 
   /** Constructor with InputStream. */
@@ -513,7 +546,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 16; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -528,7 +561,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 16; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -538,7 +571,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 16; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -549,7 +582,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 16; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -558,7 +591,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 16; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -568,7 +601,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 16; i++) jj_la1[i] = -1;
   }
 
   private Token jj_consume_token(int kind) throws ParseException {
@@ -624,7 +657,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 15; i++) {
+    for (int i = 0; i < 16; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {

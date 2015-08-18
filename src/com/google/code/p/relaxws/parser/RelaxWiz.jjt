@@ -30,6 +30,13 @@ import java.util.*;
 public class RelaxWizParser {
 
     private StringBuffer rncBuffer = new StringBuffer ();
+    private ASTservice localService = null;
+
+	/*returns parsed service*/
+	ASTservice root (){
+		if(localService==null)throw new RuntimeException("file not parsed yet?");
+		return localService; //return tree is already parsed
+	}
 
     public static void main (String[] args) throws ParseException, IOException {
         if (args.length == 0) {
@@ -104,16 +111,13 @@ SPECIAL_TOKEN: /* COMMENTS */
      <TRAILING_COMMENT: "#" (~["\n","\r"])* >
 }
 
+
 ASTservice service () :
 {
     Token t=null;
-    Token v=null;
 }
 {
-    (<SET> t=<IDENTIFIER> ("=") v=<IDENTIFIER>)*
-    {
-    	jjtThis.setOption(t.image, v.image);
-    }
+    (<SET> optDecl(jjtThis))*
     
     (<NAMESPACE> nsDecl(jjtThis))*
     
@@ -126,7 +130,20 @@ ASTservice service () :
     t=<IDENTIFIER> { jjtThis.setName (t.image); } 
     <LBRACE> (typesDecl())? (portDecl(jjtThis))+ <RBRACE>
     {
+    	localService = jjtThis;//store parsed tree
         return jjtThis;
+    }
+}
+
+void optDecl(ASTservice service) :
+{
+	Token t=null;
+    Token v=null;
+}
+{
+	t=<IDENTIFIER> ("=") ("\"") (v=<IDENTIFIER>)? ("\"")
+    {
+		service.setOption(t.image, v==null?"":v.image);
     }
 }
 
