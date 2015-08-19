@@ -1,0 +1,32 @@
+# options
+
+# fully-qualified = "true" will make all items in the resulted schema definition elementFormDefault="qualified" 
+set fully-qualified = "false"
+# remove suffix "Request"  from the operation in-message name, so in-message name = operation name
+set in-suffix = ""
+
+# define target namespace of the service
+namespace "http://hello/world/1"
+
+## this line will appear in the documentation of the wsdl
+service Hello {
+	
+    port {
+    	## greet operation
+        operation greet {
+            in {
+            	## the title. optional enumerated value
+                element tns:title { "Mr" | "Ms" | "Mrs." | "Miss" }?,
+            	## the name
+                element tns:name { xsd:string }
+            }
+
+            out {
+            	## the result message
+                element message {xsd:string}            
+            }
+
+        }
+
+    }
+}

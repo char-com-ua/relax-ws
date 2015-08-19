@@ -1,0 +1,8 @@
+# define namespace for rnc
+namespace ns2 = "http://hello/world/2"
+
+ExternalGreetInType =
+	## the title. optional enumerated value
+    element tns:title { "Mr" | "Ms" | "Mrs." | "Miss" }?,
+	## the name
+	element ns2:name { xsd:string }

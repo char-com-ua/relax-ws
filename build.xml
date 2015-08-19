@@ -126,7 +126,12 @@ Example build (OS-X):
 
 		<java classpathref="test.classpath"
 			  classname="com.google.code.p.relaxws.Convert2Wsdl" fork="true">
-			<arg line="-d ${build.home} -encoding windows-1251 samples/hello.rws"/>
+			<arg line="-d ${build.home} -encoding UTF-8 samples/hello.rws"/>
+		</java>
+		
+		<java classpathref="test.classpath"
+			  classname="com.google.code.p.relaxws.Convert2Wsdl" fork="true">
+			<arg line="-d ${build.home} -encoding UTF-8 samples/test*.rws"/>
 		</java>
 	</target>
 
