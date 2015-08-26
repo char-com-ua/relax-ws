@@ -78,12 +78,13 @@ PARSER_END (RelaxWizParser)
         <NAMESPACE: "namespace">
     |   <SET:       "set">
     |   <SERVICE:   "service">
-    |   <PORT:      "port">
+    |   <PORT:      "port" | "interface">
     |   <OPERATION: "operation">
     |   <IN:        "in">
     |   <OUT:       "out">
     |   <FAULT:     "fault">
     |   <TYPES:     "types">
+    |   <ENDPOINT:  "endpoint">
 }
 
 /*
@@ -133,6 +134,7 @@ ASTservice service () :
     	localService = jjtThis;//store parsed tree
         return jjtThis;
     }
+    
 }
 
 void optDecl(ASTservice service) :

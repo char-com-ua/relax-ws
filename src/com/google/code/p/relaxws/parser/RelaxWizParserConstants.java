@@ -57,7 +57,7 @@ public interface RelaxWizParserConstants {
     "\"namespace\"",
     "\"set\"",
     "\"service\"",
-    "\"port\"",
+    "<PORT>",
     "\"operation\"",
     "\"in\"",
     "\"out\"",
