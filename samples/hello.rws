@@ -15,7 +15,7 @@ service Hello {
     }
 	
 
-    port {
+    interface HelloPort2 {
     	## hello operation
         operation SayHello {
             in {
@@ -33,4 +33,7 @@ service Hello {
         }
 
     }
+    
+    endpoint "http://zdfcg" { type="soap" interface="HelloPort" }
+    
 }

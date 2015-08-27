@@ -6,18 +6,20 @@ public interface RelaxWizParserTreeConstants
   public int JJTSERVICE = 0;
   public int JJTOPTDECL = 1;
   public int JJTNSDECL = 2;
-  public int JJTTYPESDECL = 3;
-  public int JJTSCHEMADECL = 4;
-  public int JJTRNC = 5;
-  public int JJTPORTDECL = 6;
-  public int JJTOPERATIONDECL = 7;
-  public int JJTMESSAGEDEF = 8;
+  public int JJTEPDECL = 3;
+  public int JJTTYPESDECL = 4;
+  public int JJTSCHEMADECL = 5;
+  public int JJTRNC = 6;
+  public int JJTPORTDECL = 7;
+  public int JJTOPERATIONDECL = 8;
+  public int JJTMESSAGEDEF = 9;
 
 
   public String[] jjtNodeName = {
     "service",
     "optDecl",
     "nsDecl",
+    "epDecl",
     "typesDecl",
     "schemaDecl",
     "rnc",
@@ -26,4 +28,4 @@ public interface RelaxWizParserTreeConstants
     "MessageDef",
   };
 }
-/* JavaCC - OriginalChecksum=49e4f6e307aec99c692145351774f6b0 (do not edit this line) */
+/* JavaCC - OriginalChecksum=f4e5246703ed14a1e0359c7b9e4cd55c (do not edit this line) */

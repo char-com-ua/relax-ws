@@ -98,5 +98,11 @@ you need to do. */
     public RelaxWizParser getParser() {
         return parser;
     }
+    
+    public String text(Object o){
+    	if(o==null)return "";
+    	if(o instanceof String)return (String)o;
+    	return o.toString();
+    }
 }
 

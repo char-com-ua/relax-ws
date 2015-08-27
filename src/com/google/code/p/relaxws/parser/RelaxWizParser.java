@@ -48,7 +48,6 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
           jj_la1[0] = jj_gen;
           break label_1;
         }
-        jj_consume_token(SET);
         optDecl(jjtn000);
       }
       label_2:
@@ -61,7 +60,6 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
           jj_la1[1] = jj_gen;
           break label_2;
         }
-        jj_consume_token(NAMESPACE);
         nsDecl(jjtn000);
       }
       t = jj_consume_token(SERVICE);
@@ -90,6 +88,18 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
           jj_la1[3] = jj_gen;
           break label_3;
         }
+      }
+      label_4:
+      while (true) {
+        switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+        case ENDPOINT:
+          ;
+          break;
+        default:
+          jj_la1[4] = jj_gen;
+          break label_4;
+        }
+        epDecl(jjtn000);
       }
       jj_consume_token(RBRACE);
       jjtree.closeNodeScope(jjtn000, true);
@@ -125,18 +135,19 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
         jjtree.openNodeScope(jjtn000);Token t=null;
     Token v=null;
     try {
+      jj_consume_token(SET);
       t = jj_consume_token(IDENTIFIER);
-      jj_consume_token(22);
       jj_consume_token(23);
+      jj_consume_token(24);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case IDENTIFIER:
         v = jj_consume_token(IDENTIFIER);
         break;
       default:
-        jj_la1[4] = jj_gen;
+        jj_la1[5] = jj_gen;
         ;
       }
-      jj_consume_token(23);
+      jj_consume_token(24);
       jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;
                 service.setOption(t.image, v==null?"":v.image);
@@ -154,32 +165,33 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
         jjtree.openNodeScope(jjtn000);Token i1=null;
     Token i2=null;
     try {
+      jj_consume_token(NAMESPACE);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 23:
-        jj_consume_token(23);
-        break;
-      default:
-        jj_la1[5] = jj_gen;
-        ;
-      }
-      i1 = jj_consume_token(IDENTIFIER);
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 23:
-        jj_consume_token(23);
+      case 24:
+        jj_consume_token(24);
         break;
       default:
         jj_la1[6] = jj_gen;
         ;
       }
+      i1 = jj_consume_token(IDENTIFIER);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case 22:
-        jj_consume_token(22);
-        jj_consume_token(23);
-        i2 = jj_consume_token(IDENTIFIER);
-        jj_consume_token(23);
+      case 24:
+        jj_consume_token(24);
         break;
       default:
         jj_la1[7] = jj_gen;
+        ;
+      }
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case 23:
+        jj_consume_token(23);
+        jj_consume_token(24);
+        i2 = jj_consume_token(IDENTIFIER);
+        jj_consume_token(24);
+        break;
+      default:
+        jj_la1[8] = jj_gen;
         ;
       }
       jjtree.closeNodeScope(jjtn000, true);
@@ -189,6 +201,67 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
         }else{
                 service.setNamespace(i1.image,i2.image);
         }
+    } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+    }
+  }
+
+  final public void epDecl(ASTservice service) throws ParseException {
+ /*@bgen(jjtree) epDecl */
+        ASTepDecl jjtn000 = new ASTepDecl(this, JJTEPDECL);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);Token url=null;
+    Token key=null;
+    Token val=null;
+    try {
+      jj_consume_token(ENDPOINT);
+      jj_consume_token(24);
+      url = jj_consume_token(IDENTIFIER);
+      jj_consume_token(24);
+            jjtn000.setAddress(url);
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case LBRACE:
+        jj_consume_token(LBRACE);
+        label_5:
+        while (true) {
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case IDENTIFIER:
+            key = jj_consume_token(IDENTIFIER);
+            break;
+          case PORT:
+            key = jj_consume_token(PORT);
+            break;
+          default:
+            jj_la1[9] = jj_gen;
+            jj_consume_token(-1);
+            throw new ParseException();
+          }
+          jj_consume_token(23);
+          jj_consume_token(24);
+          val = jj_consume_token(IDENTIFIER);
+          jj_consume_token(24);
+          switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+          case PORT:
+          case IDENTIFIER:
+            ;
+            break;
+          default:
+            jj_la1[10] = jj_gen;
+            break label_5;
+          }
+        }
+                    jjtn000.opt().setValue(key,val);
+        jj_consume_token(RBRACE);
+        break;
+      default:
+        jj_la1[11] = jj_gen;
+        ;
+      }
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
+        service.addEndpoint(jjtn000);
     } finally {
           if (jjtc000) {
             jjtree.closeNodeScope(jjtn000, true);
@@ -286,19 +359,19 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
         t = jj_consume_token(IDENTIFIER);
         break;
       default:
-        jj_la1[8] = jj_gen;
+        jj_la1[12] = jj_gen;
         ;
       }
       jj_consume_token(LBRACE);
-      label_4:
+      label_6:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case OPERATION:
           ;
           break;
         default:
-          jj_la1[9] = jj_gen;
-          break label_4;
+          jj_la1[13] = jj_gen;
+          break label_6;
         }
         operationDecl();
       }
@@ -344,7 +417,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
         inDecl();
         break;
       default:
-        jj_la1[10] = jj_gen;
+        jj_la1[14] = jj_gen;
         ;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -352,7 +425,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
         outDecl();
         break;
       default:
-        jj_la1[11] = jj_gen;
+        jj_la1[15] = jj_gen;
         ;
       }
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -360,7 +433,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
         faultDecl();
         break;
       default:
-        jj_la1[12] = jj_gen;
+        jj_la1[16] = jj_gen;
         ;
       }
       jj_consume_token(RBRACE);
@@ -400,7 +473,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
         t = jj_consume_token(IDENTIFIER);
         break;
       default:
-        jj_la1[13] = jj_gen;
+        jj_la1[17] = jj_gen;
         ;
       }
       schemaDecl();
@@ -443,7 +516,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
         t = jj_consume_token(IDENTIFIER);
         break;
       default:
-        jj_la1[14] = jj_gen;
+        jj_la1[18] = jj_gen;
         ;
       }
       schemaDecl();
@@ -486,7 +559,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
         t = jj_consume_token(IDENTIFIER);
         break;
       default:
-        jj_la1[15] = jj_gen;
+        jj_la1[19] = jj_gen;
         ;
       }
       schemaDecl();
@@ -526,13 +599,13 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
   public Token jj_nt;
   private int jj_ntk;
   private int jj_gen;
-  final private int[] jj_la1 = new int[16];
+  final private int[] jj_la1 = new int[20];
   static private int[] jj_la1_0;
   static {
       jj_la1_init_0();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x80,0x40,0x4000,0x200,0x20000,0x800000,0x800000,0x400000,0x20000,0x400,0x800,0x1000,0x2000,0x20000,0x20000,0x20000,};
+      jj_la1_0 = new int[] {0x80,0x40,0x4000,0x200,0x8000,0x40000,0x1000000,0x1000000,0x800000,0x40200,0x40200,0x10000,0x40000,0x400,0x800,0x1000,0x2000,0x40000,0x40000,0x40000,};
    }
 
   /** Constructor with InputStream. */
@@ -546,7 +619,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 16; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 20; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -561,7 +634,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 16; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 20; i++) jj_la1[i] = -1;
   }
 
   /** Constructor. */
@@ -571,7 +644,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 16; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 20; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -582,7 +655,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 16; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 20; i++) jj_la1[i] = -1;
   }
 
   /** Constructor with generated Token Manager. */
@@ -591,7 +664,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 16; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 20; i++) jj_la1[i] = -1;
   }
 
   /** Reinitialise. */
@@ -601,7 +674,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
     jj_ntk = -1;
     jjtree.reset();
     jj_gen = 0;
-    for (int i = 0; i < 16; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 20; i++) jj_la1[i] = -1;
   }
 
   private Token jj_consume_token(int kind) throws ParseException {
@@ -652,12 +725,12 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[24];
+    boolean[] la1tokens = new boolean[25];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 16; i++) {
+    for (int i = 0; i < 20; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
@@ -666,7 +739,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
         }
       }
     }
-    for (int i = 0; i < 24; i++) {
+    for (int i = 0; i < 25; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

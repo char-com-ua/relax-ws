@@ -6,6 +6,8 @@ import com.google.code.p.relaxws.parser.SimpleNode;
 import com.google.code.p.relaxws.parser.RelaxWizParser;
 
 import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class ASTservice extends SimpleNode {
 
@@ -18,33 +20,17 @@ public class ASTservice extends SimpleNode {
     //port set
     private LinkedHashMap<String,ASTportDecl> portMap = new LinkedHashMap();
     //options
-    private LinkedHashMap<String,String> optMap = new LinkedHashMap();
-    //valid options
-    private static LinkedHashMap<String,String> stOptMap = new LinkedHashMap();
+    private MVMapOptions opts = new MVMapOptions();
+    //endpoints
+    private ArrayList<ASTepDecl> eps = new ArrayList();
     
-    static{
-    	stOptMap.put("fully-qualified","^(true|false)$");
-    	stOptMap.put("in-suffix",".*");
-    	stOptMap.put("out-suffix",".*");
-    	stOptMap.put("fault-suffix",".*");
-    }
-    
-    private void init(){
-    	//set default options
-    	setOption("fully-qualified","true");
-    	setOption("in-suffix","Request");
-    	setOption("out-suffix","Response");
-    	setOption("fault-suffix","Fault");
-    }
 
     public ASTservice(int id) {
         super(id);
-        init();
     }
 
     public ASTservice(RelaxWizParser p, int id) {
         super(p, id);
-        init();
     }
     
     public String getName() {
@@ -82,15 +68,25 @@ public class ASTservice extends SimpleNode {
 
     //set option
     public void setOption(String key,String value) {
-    	String matcher = stOptMap.get(key);
-    	if(matcher==null)throw new RuntimeException("unsupported option: `"+key+"`");
-    	if(!value.matches(matcher))throw new RuntimeException("wrong value: `"+value+"` for the option `"+key+"`. Valid expression: `"+matcher+"`");
-    	optMap.put(key,value);
+    	opts.setValue(key,value);
     }
     
     public String getOption(String key) {
-    	if(!optMap.containsKey(key))throw new RuntimeException("wrong option: `"+key+"`");
-    	return optMap.get(key);
+    	return opts.getValue(key);
+    }
+    
+    public void addEndpoint(ASTepDecl ep){
+    	//validate
+    	for(Iterator<String> i=ep.opt().getValues("interface").iterator();i.hasNext();){
+    		String port = i.next();
+    		if( !portMap.containsKey( port ) )throw new RuntimeException("The interface `"+port+"` required by the endpoint `"+ep.getAddress()+"` not defined.");
+    	}
+    	//add
+    	eps.add(ep);
+    }
+    
+    public ArrayList<ASTepDecl> getEndpoints(){
+    	return eps;
     }
     
     public void addPort(String name, ASTportDecl port){
@@ -106,6 +102,10 @@ public class ASTservice extends SimpleNode {
     
     public int getPortCount(){
     	return portMap.size();
+    }
+    
+    public ASTportDecl getPort(String name){
+    	return portMap.get(name);
     }
 
     public String getDocumentation() {

@@ -118,9 +118,9 @@ ASTservice service () :
     Token t=null;
 }
 {
-    (<SET> optDecl(jjtThis))*
+    (optDecl(jjtThis))*
     
-    (<NAMESPACE> nsDecl(jjtThis))*
+    (nsDecl(jjtThis))*
     
     t=<SERVICE>
     {
@@ -129,7 +129,7 @@ ASTservice service () :
 	    }catch(Exception e){}
     }
     t=<IDENTIFIER> { jjtThis.setName (t.image); } 
-    <LBRACE> (typesDecl())? (portDecl(jjtThis))+ <RBRACE>
+    <LBRACE> (typesDecl())? (portDecl(jjtThis))+ (epDecl(jjtThis))* <RBRACE>
     {
     	localService = jjtThis;//store parsed tree
         return jjtThis;
@@ -143,6 +143,7 @@ void optDecl(ASTservice service) :
     Token v=null;
 }
 {
+	<SET>
 	t=<IDENTIFIER> ("=") ("\"") (v=<IDENTIFIER>)? ("\"")
     {
 		service.setOption(t.image, v==null?"":v.image);
@@ -155,8 +156,7 @@ void nsDecl(ASTservice service) :
     Token i2=null;
 }
 {
-	//(i1=<IDENTIFIER> "=")? ("\"")? i2=<IDENTIFIER> ("\"")?
-	//(key=<IDENTIFIER> "=")? ("\"")? val=<IDENTIFIER> ("\"")?
+	<NAMESPACE> 
 	("\"")? i1=<IDENTIFIER> ("\"")? [ ("=") ("\"") i2=<IDENTIFIER> ("\"") ]
     {
     	if(i2==null){
@@ -164,6 +164,32 @@ void nsDecl(ASTservice service) :
     	}else{
 	    	service.setNamespace(i1.image,i2.image);
     	}
+    }
+}
+
+void epDecl(ASTservice service) :
+{
+	Token url=null;
+    Token key=null;
+    Token val=null;
+}
+{
+	<ENDPOINT> 
+	("\"") url=<IDENTIFIER> ("\"")
+    {
+	    jjtThis.setAddress(url);
+    }
+    [ 
+    	<LBRACE> ( 
+    		(key=<IDENTIFIER> | key=<PORT>) ("=") ("\"") val=<IDENTIFIER> ("\"") 
+    	)+ 
+		{
+		    jjtThis.opt().setValue(key,val);
+		}
+    	<RBRACE> 
+    ]
+    {
+    	service.addEndpoint(jjtThis);
     }
 }
 

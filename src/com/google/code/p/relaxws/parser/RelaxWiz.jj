@@ -88,6 +88,7 @@ PARSER_END (RelaxWizParser)
     |   <OUT:       "out">
     |   <FAULT:     "fault">
     |   <TYPES:     "types">
+    |   <ENDPOINT:  "endpoint">
 }
 
 /*
@@ -127,9 +128,9 @@ ASTservice service () :
 {/*@bgen(jjtree) service */
     try {
 /*@egen*/
-    (<SET> optDecl(jjtn000))*
+    (optDecl(jjtn000))*
     
-    (<NAMESPACE> nsDecl(jjtn000))*
+    (nsDecl(jjtn000))*
     
     t=<SERVICE>
     {
@@ -138,7 +139,7 @@ ASTservice service () :
 	    }catch(Exception e){}
     }
     t=<IDENTIFIER> { jjtn000.setName (t.image); } 
-    <LBRACE> (typesDecl())? (portDecl(jjtn000))+ <RBRACE>/*@bgen(jjtree)*/
+    <LBRACE> (typesDecl())? (portDecl(jjtn000))+ (epDecl(jjtn000))* <RBRACE>/*@bgen(jjtree)*/
     {
       jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;
@@ -168,6 +169,7 @@ ASTservice service () :
       }
     }
 /*@egen*/
+    
 }
 
 void optDecl(ASTservice service) :
@@ -182,6 +184,7 @@ void optDecl(ASTservice service) :
 {/*@bgen(jjtree) optDecl */
         try {
 /*@egen*/
+	<SET>
 	t=<IDENTIFIER> ("=") ("\"") (v=<IDENTIFIER>)? ("\"")/*@bgen(jjtree)*/
     {
       jjtree.closeNodeScope(jjtn000, true);
@@ -211,8 +214,7 @@ void nsDecl(ASTservice service) :
 {/*@bgen(jjtree) nsDecl */
         try {
 /*@egen*/
-	//(i1=<IDENTIFIER> "=")? ("\"")? i2=<IDENTIFIER> ("\"")?
-	//(key=<IDENTIFIER> "=")? ("\"")? val=<IDENTIFIER> ("\"")?
+	<NAMESPACE> 
 	("\"")? i1=<IDENTIFIER> ("\"")? [ ("=") ("\"") i2=<IDENTIFIER> ("\"") ]/*@bgen(jjtree)*/
     {
       jjtree.closeNodeScope(jjtn000, true);
@@ -225,6 +227,49 @@ void nsDecl(ASTservice service) :
     	}else{
 	    	service.setNamespace(i1.image,i2.image);
     	}
+    }/*@bgen(jjtree)*/
+        } finally {
+          if (jjtc000) {
+            jjtree.closeNodeScope(jjtn000, true);
+          }
+        }
+/*@egen*/
+}
+
+void epDecl(ASTservice service) :
+{/*@bgen(jjtree) epDecl */
+        ASTepDecl jjtn000 = new ASTepDecl(this, JJTEPDECL);
+        boolean jjtc000 = true;
+        jjtree.openNodeScope(jjtn000);
+/*@egen*/
+	Token url=null;
+    Token key=null;
+    Token val=null;
+}
+{/*@bgen(jjtree) epDecl */
+        try {
+/*@egen*/
+	<ENDPOINT> 
+	("\"") url=<IDENTIFIER> ("\"")
+    {
+	    jjtn000.setAddress(url);
+    }
+    [ 
+    	<LBRACE> ( 
+    		(key=<IDENTIFIER> | key=<PORT>) ("=") ("\"") val=<IDENTIFIER> ("\"") 
+    	)+ 
+		{
+		    jjtn000.opt().setValue(key,val);
+		}
+    	<RBRACE> 
+    ]/*@bgen(jjtree)*/
+    {
+      jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
+    }
+/*@egen*/
+    {
+    	service.addEndpoint(jjtn000);
     }/*@bgen(jjtree)*/
         } finally {
           if (jjtc000) {

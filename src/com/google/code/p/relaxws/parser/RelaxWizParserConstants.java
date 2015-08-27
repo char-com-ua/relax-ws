@@ -29,19 +29,21 @@ public interface RelaxWizParserConstants {
   /** RegularExpression Id. */
   int TYPES = 14;
   /** RegularExpression Id. */
-  int LBRACE = 15;
+  int ENDPOINT = 15;
   /** RegularExpression Id. */
-  int RBRACE = 16;
+  int LBRACE = 16;
   /** RegularExpression Id. */
-  int IDENTIFIER = 17;
+  int RBRACE = 17;
   /** RegularExpression Id. */
-  int LETTER = 18;
+  int IDENTIFIER = 18;
   /** RegularExpression Id. */
-  int DIGIT = 19;
+  int LETTER = 19;
   /** RegularExpression Id. */
-  int SYMBOL = 20;
+  int DIGIT = 20;
   /** RegularExpression Id. */
-  int TRAILING_COMMENT = 21;
+  int SYMBOL = 21;
+  /** RegularExpression Id. */
+  int TRAILING_COMMENT = 22;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -63,6 +65,7 @@ public interface RelaxWizParserConstants {
     "\"out\"",
     "\"fault\"",
     "\"types\"",
+    "\"endpoint\"",
     "\"{\"",
     "\"}\"",
     "<IDENTIFIER>",
