@@ -17,7 +17,7 @@ public interface RelaxWizParserConstants {
   /** RegularExpression Id. */
   int SERVICE = 8;
   /** RegularExpression Id. */
-  int PORT = 9;
+  int INTERFACE = 9;
   /** RegularExpression Id. */
   int OPERATION = 10;
   /** RegularExpression Id. */
@@ -59,7 +59,7 @@ public interface RelaxWizParserConstants {
     "\"namespace\"",
     "\"set\"",
     "\"service\"",
-    "<PORT>",
+    "<INTERFACE>",
     "\"operation\"",
     "\"in\"",
     "\"out\"",

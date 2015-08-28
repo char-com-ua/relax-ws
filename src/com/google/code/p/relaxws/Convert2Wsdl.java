@@ -312,7 +312,21 @@ public class Convert2Wsdl {
 			}
 		}
 		if(tree.getEndpoints().size()>0){
+			int counter = 0;
 			for(ASTepDecl ep: tree.getEndpoints()) {
+				counter++;
+				String epType = ep.opt().getValue("type");
+				String bindName = tree.getName()+epType.substring(0,1).toUpperCase()+epType.substring(1)+"Binding"+counter;
+				
+				out.println ();
+				out.println ("  <binding name=\"" + bindName + "\" type=\"tns:" + port.getName() + "\">");
+				out.println ("    <soap:binding style=\"document\" transport=\"http://schemas.xmlsoap.org/soap/http\"/>");
+				for( String portName: ep.opt().getValues("interface") ) {
+					ASTportDecl port = tree.getPort(portName);
+					if( "soap".equals( epType ) ){
+						
+					} //else is an http or ....
+				}
 				System.out.println(ep.getAddress());
 			}
 		}	

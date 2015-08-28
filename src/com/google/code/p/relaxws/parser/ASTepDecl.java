@@ -22,23 +22,30 @@ class ASTepDecl extends SimpleNode {
 			"soap"
 		},
 		{
+			"address",              //name of the value
+			".*",                   //validator for the values/ for now only soap supported
+			Boolean.FALSE,          //multivalue
+			Boolean.TRUE,           //unique. used only if multivalue is true
+			null
+		},
+		{
 			"interface",            //name of the value
 			".*",                   //validator for the values
 			Boolean.TRUE,           //multivalue
 			Boolean.TRUE,           //unique. used only if multivalue is true
-			""
+			null                    //null means no def value
 		}
 	};
 	
-	private String address=null;
+	private String name=null;
 	private MVMap opt = new MVMap("endpoint options", params);
 	
 	
-	public void setAddress(Object s){
-		address=text(s);
+	public void setName(Object s){
+		name=text(s);
 	}
-	public String getAddress(){
-		return address;
+	public String getName(){
+		return name;
 	}
 	//returns endpoint options
 	public MVMap opt(){

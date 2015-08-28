@@ -82,7 +82,7 @@ PARSER_END (RelaxWizParser)
         <NAMESPACE: "namespace">
     |   <SET:       "set">
     |   <SERVICE:   "service">
-    |   <PORT:      "port" | "interface">
+    |   <INTERFACE: "port" | "interface">
     |   <OPERATION: "operation">
     |   <IN:        "in">
     |   <OUT:       "out">
@@ -242,7 +242,7 @@ void epDecl(ASTservice service) :
         boolean jjtc000 = true;
         jjtree.openNodeScope(jjtn000);
 /*@egen*/
-	Token url=null;
+	Token name=null;
     Token key=null;
     Token val=null;
 }
@@ -250,24 +250,22 @@ void epDecl(ASTservice service) :
         try {
 /*@egen*/
 	<ENDPOINT> 
-	("\"") url=<IDENTIFIER> ("\"")
+	(name=<IDENTIFIER>)?
     {
-	    jjtn000.setAddress(url);
+	    jjtn000.setName(name);
     }
-    [ 
-    	<LBRACE> ( 
-    		(key=<IDENTIFIER> | key=<PORT>) ("=") ("\"") val=<IDENTIFIER> ("\"") 
-    	)+ 
-		{
-		    jjtn000.opt().setValue(key,val);
-		}
-    	<RBRACE> 
-    ]/*@bgen(jjtree)*/
+	<LBRACE> ( 
+		(key=<IDENTIFIER> | key=<INTERFACE>) ("=") ("\"") val=<IDENTIFIER> ("\"") 
+	)+ 
+	{
+	    jjtn000.opt().setValue(key,val);
+	}
+	<RBRACE>/*@bgen(jjtree)*/
     {
       jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;
     }
-/*@egen*/
+/*@egen*/ 
     {
     	service.addEndpoint(jjtn000);
     }/*@bgen(jjtree)*/
@@ -378,7 +376,7 @@ void portDecl(ASTservice service) :
 {/*@bgen(jjtree) portDecl */
     try {
 /*@egen*/
-    <PORT> (t=<IDENTIFIER>)? <LBRACE> (operationDecl())* <RBRACE>/*@bgen(jjtree)*/
+    <INTERFACE> (t=<IDENTIFIER>)? <LBRACE> (operationDecl())* <RBRACE>/*@bgen(jjtree)*/
     {
       jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;

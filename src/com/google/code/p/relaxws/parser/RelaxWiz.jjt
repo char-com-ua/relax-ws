@@ -78,7 +78,7 @@ PARSER_END (RelaxWizParser)
         <NAMESPACE: "namespace">
     |   <SET:       "set">
     |   <SERVICE:   "service">
-    |   <PORT:      "port" | "interface">
+    |   <INTERFACE: "port" | "interface">
     |   <OPERATION: "operation">
     |   <IN:        "in">
     |   <OUT:       "out">
@@ -169,25 +169,23 @@ void nsDecl(ASTservice service) :
 
 void epDecl(ASTservice service) :
 {
-	Token url=null;
+	Token name=null;
     Token key=null;
     Token val=null;
 }
 {
 	<ENDPOINT> 
-	("\"") url=<IDENTIFIER> ("\"")
+	(name=<IDENTIFIER>)?
     {
-	    jjtThis.setAddress(url);
+	    jjtThis.setName(name);
     }
-    [ 
-    	<LBRACE> ( 
-    		(key=<IDENTIFIER> | key=<PORT>) ("=") ("\"") val=<IDENTIFIER> ("\"") 
-    	)+ 
-		{
-		    jjtThis.opt().setValue(key,val);
-		}
-    	<RBRACE> 
-    ]
+	<LBRACE> ( 
+		(key=<IDENTIFIER> | key=<INTERFACE>) ("=") ("\"") val=<IDENTIFIER> ("\"") 
+	)+ 
+	{
+	    jjtThis.opt().setValue(key,val);
+	}
+	<RBRACE> 
     {
     	service.addEndpoint(jjtThis);
     }
@@ -237,7 +235,7 @@ void portDecl(ASTservice service) :
     Token t = null;
 }
 {
-    <PORT> (t=<IDENTIFIER>)? <LBRACE> (operationDecl())* <RBRACE>
+    <INTERFACE> (t=<IDENTIFIER>)? <LBRACE> (operationDecl())* <RBRACE>
     {
         service.addPort( t==null?null:t.image, jjtThis );
     }

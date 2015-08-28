@@ -34,6 +34,6 @@ service Hello {
 
     }
     
-    endpoint "http://zdfcg" { type="soap" interface="HelloPort" }
+    endpoint { type="soap"  interface="HelloPort2" address="http://test.com" }
     
 }

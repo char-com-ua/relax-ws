@@ -46,7 +46,7 @@ public class MVMap {
 					case 4: 
 						if(key.unique)key.values=new LinkedHashSet();
 						else key.values=new ArrayList();
-						key.values.add( (String)keys[i][j] );
+						if(keys[i][j]!=null)key.values.add( (String)keys[i][j] );
 						break;
 				}
 			}
@@ -66,6 +66,15 @@ public class MVMap {
 	
 	//returns first value
 	public String getValue(String name){
+		MVKey key = getKey(name);
+		if(key.values.size()<1)throw new RuntimeException("The key with name `"+name+"` is required");
+		return getKey(name).values.iterator().next();
+	}
+	
+	//returns first value
+	public String getValue(String name, String defValue){
+		MVKey key = getKey(name);
+		if(key.values.size()<1)return defValue;
 		return getKey(name).values.iterator().next();
 	}
 	
