@@ -79,7 +79,7 @@ public class ASTservice extends SimpleNode {
     	//validate
     	for(Iterator<String> i=ep.opt().getValues("interface").iterator();i.hasNext();){
     		String port = i.next();
-    		if( !portMap.containsKey( port ) )throw new RuntimeException("The interface `"+port+"` required by the endpoint `"+ep.getAddress()+"` not defined.");
+    		if( !portMap.containsKey( port ) )throw new RuntimeException("The interface `"+port+"` required by the endpoint `"+ep+"` not defined.");
     	}
     	//add
     	eps.add(ep);
@@ -91,7 +91,7 @@ public class ASTservice extends SimpleNode {
     
     public void addPort(String name, ASTportDecl port){
     	if(name==null || name.length()==0)name=this.name+"Port";
-    	if(portMap.containsKey(name))throw new RuntimeException("The port with name `"+name+"` already defined. Please rename one.");
+    	if(portMap.containsKey(name))throw new RuntimeException("The interface (port) with name `"+name+"` already defined. Please rename one.");
     	port.setName(name);
     	portMap.put(name,port);
     }

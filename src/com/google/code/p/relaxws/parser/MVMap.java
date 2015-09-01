@@ -67,7 +67,7 @@ public class MVMap {
 	//returns first value
 	public String getValue(String name){
 		MVKey key = getKey(name);
-		if(key.values.size()<1)throw new RuntimeException("The key with name `"+name+"` is required");
+		if(key.values.size()<1)throw new RuntimeException("The key with name `"+name+"` is required. "+this);
 		return getKey(name).values.iterator().next();
 	}
 	
@@ -98,6 +98,23 @@ public class MVMap {
 			key.values.clear();
 			key.values.add(svalue);
 		}
+	}
+	
+	public String toString(){
+		StringBuilder s=new StringBuilder();
+		s.append("<");
+		s.append(mapname);
+		s.append(">[");
+		for(String i:keys.keySet()){
+			s.append( " " );
+			s.append( i );
+			s.append( ":" );
+			s.append( keys.get(i).values );
+			s.append( ", " );
+			
+		}
+		s.append("]");
+		return s.toString();
 	}
 	
 }

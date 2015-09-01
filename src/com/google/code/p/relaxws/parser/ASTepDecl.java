@@ -31,7 +31,7 @@ class ASTepDecl extends SimpleNode {
 		{
 			"interface",            //name of the value
 			".*",                   //validator for the values
-			Boolean.TRUE,           //multivalue
+			Boolean.FALSE,          //multivalue
 			Boolean.TRUE,           //unique. used only if multivalue is true
 			null                    //null means no def value
 		}

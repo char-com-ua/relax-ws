@@ -30,6 +30,7 @@ import com.thaiopensource.resolver.BasicResolver;
 import java.io.*;
 import java.net.URL;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -239,6 +240,7 @@ public class Convert2Wsdl {
 				for (Node msgNode: op.getChildren()) {
 					ASTMessageDef message = (ASTMessageDef) msgNode;
 					// declare message type
+					out.println ();
 					out.println ("  <message name=\"" + message.getMessageName() + "\">");
 					out.println ("    <part name=\"body\" element=\"tns:" + message.getName() + "\"/>");
 					out.println ("  </message>");
@@ -279,7 +281,7 @@ public class Convert2Wsdl {
 			out.println ("  </portType>");
 			
 			if(tree.getEndpoints().size()==0) {
-				//render old style binding and endpoint for each port definition
+				//render old style binding and fake endpoint for each port definition
 				// binding to soap
 				out.println ();
 				out.println ("  <binding name=\"" + port.getName() + "SoapBinding\" type=\"tns:" + port.getName() + "\">");
@@ -313,22 +315,55 @@ public class Convert2Wsdl {
 		}
 		if(tree.getEndpoints().size()>0){
 			int counter = 0;
+			LinkedHashSet<String> bindingSet = new LinkedHashSet();
+			StringBuilder serviceOut = new StringBuilder(1000);
 			for(ASTepDecl ep: tree.getEndpoints()) {
 				counter++;
 				String epType = ep.opt().getValue("type");
-				String bindName = tree.getName()+epType.substring(0,1).toUpperCase()+epType.substring(1)+"Binding"+counter;
+				String portRefName = ep.opt().getValue("interface",null);
 				
-				out.println ();
-				out.println ("  <binding name=\"" + bindName + "\" type=\"tns:" + port.getName() + "\">");
-				out.println ("    <soap:binding style=\"document\" transport=\"http://schemas.xmlsoap.org/soap/http\"/>");
-				for( String portName: ep.opt().getValues("interface") ) {
-					ASTportDecl port = tree.getPort(portName);
+				for(ASTportDecl port : tree.getPorts()) {
+					String bindName = port.getName()+epType.substring(0,1).toUpperCase()+epType.substring(1);
+					if(portRefName!=null && !portRefName.equals(port.getName()))continue; //reference to the interface defined but not matches to current one
+					if(bindingSet.contains(bindName))continue; //current interface already binded with specific binding type (soap,...)
+					bindingSet.add(bindName);
+					out.println ();
+					out.println ("  <binding name=\"" + bindName + "Binding\" type=\"tns:" + port.getName() + "\">");
 					if( "soap".equals( epType ) ){
-						
+						out.println ("    <soap:binding style=\"document\" transport=\"http://schemas.xmlsoap.org/soap/http\"/>");
+						for (Node opNode: port.getChildren()) {
+							ASToperationDecl op = (ASToperationDecl) opNode;
+
+							out.println ("    <operation name=\"" + op.getName() + "\">");
+							out.println ("      <soap:operation soapAction=\"urn:" + op.getName() + "\"/>");
+							out.println ("      <input>\n" +
+									"        <soap:body use=\"literal\"/>\n" +
+									"      </input>\n" +
+									"      <output>\n" +
+									"        <soap:body use=\"literal\"/>\n" +
+									"      </output>\n" +
+									"      <!--<fault>\n" +
+									"        <soap:fault use=\"literal\"/>\n" +
+									"      </fault>-->");
+							out.println ("    </operation>");
+							// TODO: uncomment soap:fault above once faults are truly implemented
+							
+							serviceOut.append(
+								"    <port name=\"" + (ep.getName()==null?bindName:ep.getName()) + "\" binding=\"tns:" + bindName + "Binding\">\n" +
+								"      <soap:address location=\""+ ep.opt().getValue("address") +"\"/>\n" +
+								"    </port>\n" 
+							);
+						}
+						out.println ("  </binding>");
 					} //else is an http or ....
+					
 				}
-				System.out.println(ep.getAddress());
+				
 			}
+			out.println();
+			out.println ("  <service name=\"" + tree.getName() + "\">\n");
+			out.println (serviceOut);
+			out.println ("  </service>");
 		}	
 		out.print ("</definitions>\n");
 	}

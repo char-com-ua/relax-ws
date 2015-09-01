@@ -1,0 +1,40 @@
+#!relax-ws-v2
+# options
+
+# fully-qualified = "true" will make all items in the resulted schema definition elementFormDefault="qualified" 
+set fully-qualified = "false"
+# remove suffix "Request"  from the operation in-message name, so in-message name = operation name
+set in-suffix = ""
+
+# define target namespace of the service
+namespace "http://hello/world/1"
+
+## this line will appear in the documentation of the wsdl
+service Hello {
+	
+    interface i1 {
+    	## greet operation
+        operation op1 {
+            in  { empty }
+            out { empty }
+        }
+    }
+    interface i2 {
+    	#extends i1
+    	## greet operation
+        operation op2 {
+            in  { empty }
+            out { empty }
+        }
+    }
+    interface i3 {
+    	## greet operation
+        operation op3 {
+            in  { empty }
+            out { empty }
+        }
+    }
+    
+   	endpoint {address="http://address/01"}
+    
+}

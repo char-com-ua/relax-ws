@@ -245,6 +245,7 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
         jj_consume_token(24);
         val = jj_consume_token(IDENTIFIER);
         jj_consume_token(24);
+                        jjtn000.opt().setValue(key,val);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case INTERFACE:
         case IDENTIFIER:
@@ -255,7 +256,6 @@ public class RelaxWizParser/*@bgen(jjtree)*/implements RelaxWizParserTreeConstan
           break label_5;
         }
       }
-            jjtn000.opt().setValue(key,val);
       jj_consume_token(RBRACE);
       jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;

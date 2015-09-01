@@ -255,11 +255,11 @@ void epDecl(ASTservice service) :
 	    jjtn000.setName(name);
     }
 	<LBRACE> ( 
-		(key=<IDENTIFIER> | key=<INTERFACE>) ("=") ("\"") val=<IDENTIFIER> ("\"") 
+		((key=<IDENTIFIER> | key=<INTERFACE>) ("=") ("\"") val=<IDENTIFIER> ("\""))
+		{
+			jjtn000.opt().setValue(key,val);
+		}
 	)+ 
-	{
-	    jjtn000.opt().setValue(key,val);
-	}
 	<RBRACE>/*@bgen(jjtree)*/
     {
       jjtree.closeNodeScope(jjtn000, true);

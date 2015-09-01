@@ -180,11 +180,11 @@ void epDecl(ASTservice service) :
 	    jjtThis.setName(name);
     }
 	<LBRACE> ( 
-		(key=<IDENTIFIER> | key=<INTERFACE>) ("=") ("\"") val=<IDENTIFIER> ("\"") 
+		((key=<IDENTIFIER> | key=<INTERFACE>) ("=") ("\"") val=<IDENTIFIER> ("\""))
+		{
+			jjtThis.opt().setValue(key,val);
+		}
 	)+ 
-	{
-	    jjtThis.opt().setValue(key,val);
-	}
 	<RBRACE> 
     {
     	service.addEndpoint(jjtThis);
