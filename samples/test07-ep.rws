@@ -35,6 +35,7 @@ service Hello {
         }
     }
     
-   	endpoint {address="http://address/01" }
+   	endpoint {address="http://address/01" interface="i1"}
+   	endpoint {address="http://address/02" interface="i2"}
     
 }

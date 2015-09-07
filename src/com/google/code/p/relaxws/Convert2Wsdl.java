@@ -349,7 +349,7 @@ public class Convert2Wsdl {
 							// TODO: uncomment soap:fault above once faults are truly implemented
 							
 							serviceOut.append(
-								"    <port name=\"" + (ep.getName()==null?bindName:ep.getName()) + "\" binding=\"tns:" + bindName + "Binding\">\n" +
+								"    <port name=\"" + (ep.getName().length()==0?bindName:ep.getName()) + "\" binding=\"tns:" + bindName + "Binding\">\n" +
 								"      <soap:address location=\""+ ep.opt().getValue("address") +"\"/>\n" +
 								"    </port>\n" 
 							);
