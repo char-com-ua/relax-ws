@@ -15,7 +15,7 @@ Example build (OS-X):
 -->
 <project name="relaxws" default="build" basedir=".">
 
-	<property name="app.version" value="0.2.4"/>
+	<property name="app.version" value="0.2.5"/>
 	<property name="release.name" value="${ant.project.name}-${app.version}"/>
 	<property name="javacc.ver" value="javacc-5.0" />
 	
